@@ -1,10 +1,14 @@
 
+import { useState } from "react";
+function Forminput({place,valor,setvalor}) {
 
-function Forminput() {
 
   return (
   
-        <input type="text" placeholder="patata" />
+        <input type="text" placeholder={place} value={valor} onChange={(e) => {
+          e.preventDefault()
+          setvalor(e.target.value)
+        }}/>
    
    
   )
