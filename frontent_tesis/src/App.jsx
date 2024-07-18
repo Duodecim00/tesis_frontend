@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NewGrade from './pages/NewGrade.jsx';
 import RegisterStudent from './pages/RegisterStudent.jsx';
 import RegisterTeacher from './pages/RegisterTeacher.jsx'
 import Login from './pages/login.jsx';
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/registerS" element={<RegisterStudent/>} />
         <Route path="/RegisterT" element={<RegisterTeacher/>} />
+        <Route path="/NewGrade" element={<NewGrade/>} />
         <Route path="/" element={<Login/>} />
       </Routes>
     </Router>
