@@ -13,7 +13,7 @@ import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Divider from '@mui/material/Divider';
-
+import Button from '@mui/material/Button';
 
 import './login.css';
 
@@ -86,7 +86,9 @@ function Login() {
       </Grid>
 
      
-
+      <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
+        <Button variant="contained">Continue</Button>
+    </div>
 
 </Grid>
         </Box>
