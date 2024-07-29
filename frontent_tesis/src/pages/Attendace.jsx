@@ -18,6 +18,7 @@ import Forminput from '../components/Forminput';
 import './register.css';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { getStundetsByTeacher } from '../api/alumno.api';
 
 
 
@@ -25,9 +26,6 @@ function Attendace() {
   const {state} = useLocation();
   const { id } = state; // Read values passed on state
 
-  useEffect(()=>{
-    console.log(id)
-  },[])
 
   return(
 
@@ -56,7 +54,7 @@ Attendace Traker
 
 <Box sx={{ width: '90%', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}}alignItems="center">
 
-
+9
     <Grid container spacing={2} sx={{ padding: '25px',}}>
       
         <Grid item xs={12} >
@@ -103,7 +101,7 @@ Attendace Traker
               </div>
             </Grid>
               <Grid container >
-                 <Forminput/>
+                 <Forminput id={id}/>
               </Grid>
         </Grid>
 </Grid>
