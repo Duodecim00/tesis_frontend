@@ -16,47 +16,16 @@ import FormControl from '@mui/material/FormControl';
 import Forminput from '../components/Forminput';
 
 import './register.css';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getStundetsByTeacher } from '../api/alumno.api';
 
 
 
 function Attendace() {
- /* async function probando() {
-    const url = "http://localhost:3000/newstudent";
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        nombrecompleto:${nombrecompleto},
-        cedula:${cedula},
-        grado:${grado},
-        seccion:${seccion},
-      })}
-  try {
-    const response = await fetch(url,requestOptions);
-    if (!response.ok) {
-      throw new Error(Response status: ${response.status});
-    }
+  const {state} = useLocation();
+  const { id } = state; // Read values passed on state
 
-    const json = await response.json();
-    console.log(json);
-
-
-      try {
-        const changemode = await fetch("http://192.168.1.106/off")
-        console.log(changemode)
-      } catch (error) {
-        console.log(error.message)
-      }
-
-    
-    
-  } catch (error) {
-    console.error(error.message);
-  }
-  }*/
 
   return(
 
@@ -85,7 +54,7 @@ Attendace Traker
 
 <Box sx={{ width: '90%', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}}alignItems="center">
 
-
+9
     <Grid container spacing={2} sx={{ padding: '25px',}}>
       
         <Grid item xs={12} >
@@ -132,7 +101,7 @@ Attendace Traker
               </div>
             </Grid>
               <Grid container >
-                 <Forminput/>
+                 <Forminput id={id}/>
               </Grid>
         </Grid>
 </Grid>

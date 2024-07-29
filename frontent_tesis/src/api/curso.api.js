@@ -43,3 +43,24 @@ export async function getsections(id){
         console.error(error.message);
       }
   }
+
+  export async function getstudentgrade(id) {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }}
+      try {
+        const response = await fetch(`http://localhost:3000/getstudentgrade/${id}`,requestOptions);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+    
+        const json = await response.json();
+        console.log(json)
+        return json
+      } catch (error) {
+        console.error(error.message);
+      }
+  }
