@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import theme from '../color/color';
 import Button from '@mui/material/Button';
@@ -22,6 +22,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { colors } from '@mui/material';
+import { getallteachers } from '../api/profesor.api';
+import { CreateNewGrade } from '../api/curso.api';
 
 function NewGrade() {
 
@@ -37,6 +39,8 @@ function NewGrade() {
   const [timeEnd,setTimeEnd] = useState();
 
   const [days, setdays] = useState([]);
+
+  const [teachers,setteachers] = useState()
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -72,6 +76,29 @@ function NewGrade() {
   };
 
 
+  async function newGrado() {
+    console.log(Name)
+    console.log(Teacher)
+    console.log(Seccion)
+    console.log(Weeks)
+    console.log(startDate)
+    console.log(TimeStart)
+    console.log(TimeStart.$d.toLocaleString())
+    console.log(timeEnd)
+    console.log(timeEnd.$d)
+    console.log(days)
+    CreateNewGrade(Name,Teacher,Seccion,Weeks,startDate,TimeStart.$d.toLocaleString(),timeEnd.$d.toLocaleString(),days)
+  }
+
+  async function getteachers() {
+   const respuesta = await getallteachers()
+    setteachers(respuesta)
+  }
+
+  useEffect(()=>{
+    getteachers()
+  },[])
+
 
   return(
 <>
@@ -95,7 +122,7 @@ function NewGrade() {
         }} item xs={12} >
               <Grid container spacing={1}>
                   <Grid item xs={12}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Grade Name" variant="outlined" valor={Name} setvalor={setName} />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Grade Name" variant="outlined" value={Name} onChange={(e)=>{setName(e.target.value)}} />
                   </Grid>
 
                   <Grid item xs={6}>
@@ -108,9 +135,14 @@ function NewGrade() {
                              label="Teacher"
                              onChange={handleTeacher}
                            >
-                                <MenuItem value={10}>luis luis</MenuItem>
-                                <MenuItem value={20}>fer fer</MenuItem>
-                                <MenuItem value={30}>ricardo ricardo</MenuItem>
+                            {teachers&&teachers.map((teacher)=>{
+                              return(
+                                <MenuItem value={teacher._id}>{teacher.nombrecompleto}</MenuItem>
+                              )
+                            })}
+                                
+                                {/* <MenuItem value={20}>fer fer</MenuItem>
+                                <MenuItem value={30}>ricardo ricardo</MenuItem> */}
   
                                 
                        </Select>
@@ -162,7 +194,7 @@ function NewGrade() {
 
                   <Grid item xs={6}>
                   <FormControl fullWidth>
-                       <InputLabel id="demo-simple-select-label">Seccion</InputLabel>
+                       <InputLabel id="demo-simple-select-label">Section</InputLabel>
                            <Select
                              labelId="demo-simple-select-label"
                              id="demo-simple-select"
@@ -238,7 +270,7 @@ function NewGrade() {
         
 
     <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
-        <Button onClick={()=>{console.log(days)}} variant="contained">Continue</Button>
+        <Button onClick={()=>{newGrado()}} variant="contained">Continue</Button>
     </div>
 </Grid>
 

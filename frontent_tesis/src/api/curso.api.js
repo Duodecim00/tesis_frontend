@@ -64,3 +64,35 @@ export async function getsections(id){
         console.error(error.message);
       }
   }
+
+  export async function CreateNewGrade(name,idteacher,seccion,weeks,startdate,timestart,timeend,days){
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+      id_profesor:idteacher,
+      nombreCurso:name,
+      seccion:seccion,
+      fechaInicio:startdate,
+      duracionCurso:weeks,
+      horaStart: new Date(timestart),
+      HoraEnd:timeend,
+      dias:days
+      })}
+      try {
+        const response = await fetch(`http://localhost:3000/NewGrade`,requestOptions);
+        if (!response.ok) {
+          const json = await response.json();
+        console.log(json)
+          throw new Error(`Response status: ${response.status}`);
+        }
+        const json = await response.json();
+        console.log(json)
+        return json
+      } catch (error) {
+        console.error(error.message);
+      }
+  }
