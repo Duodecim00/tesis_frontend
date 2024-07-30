@@ -62,7 +62,7 @@ const columns = [
   },
   {
     id: 'Attendance',
-    label: 'Attendance',
+    label: 'Attendance %',
     minWidth:  80,
     align: 'right',
     format: (value) => value.toFixed(2),
@@ -111,7 +111,7 @@ function Forminput(id) {
         Age:respuesta[0].edad,
         Grade:result[0].nombreCurso,
         Section:result[0].seccion,
-        Attendance:'90%'
+        Attendance:'65%'
       }
       setrows([...rows, student]);
       
@@ -159,7 +159,11 @@ function Forminput(id) {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={"center"} style={{
-                          backgroundColor: value == '90%' ? colors.green[400] : 'white',
+                          backgroundColor: 
+                          column.id=='Attendance'&& value.substring(0, value.length - 1) <= 50 ? colors.red[700] : 
+                          column.id=='Attendance'&& value.substring(0, value.length - 1) <= 75 ? colors.yellow[700] :
+                          column.id=='Attendance'&& value.substring(0, value.length - 1) > 75 ? colors.green[400] :
+                          'white',
                         }}>
                           {column.format && typeof value === 'number'
                             ? column.format(value)
