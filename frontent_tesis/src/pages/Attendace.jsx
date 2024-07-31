@@ -17,7 +17,7 @@ import Forminput from '../components/Forminput';
 
 import './register.css';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getStundetsByTeacher } from '../api/alumno.api';
 
 
@@ -25,6 +25,8 @@ import { getStundetsByTeacher } from '../api/alumno.api';
 function Attendace() {
   const {state} = useLocation();
   const { id } = state; // Read values passed on state
+
+  const navigate = useNavigate();
 
 
   return(
@@ -39,7 +41,7 @@ Attendace Traker
     <Button variant="contained" startIcon={<DeleteIcon />}>
         New Student
     </Button>
-    <Button variant="contained" startIcon={<DeleteIcon />}>
+    <Button variant="contained" startIcon={<DeleteIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
         New Grade
     </Button>
     <Button variant="contained" startIcon={<DeleteIcon />}>

@@ -24,6 +24,8 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { colors } from '@mui/material';
 import { getallteachers } from '../api/profesor.api';
 import { CreateNewGrade } from '../api/curso.api';
+import Alert from '@mui/material/Alert';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function NewGrade() {
 
@@ -42,6 +44,11 @@ function NewGrade() {
 
   const [teachers,setteachers] = useState()
 
+  const [error,seterror] = useState(false)
+  const [errorText,seterrorText] = useState('ErrorMsg')
+
+  const [Success,setSuccess] = useState(false)
+
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -52,6 +59,11 @@ function NewGrade() {
       },
     },
   };
+
+  const {state} = useLocation();
+  const { id } = state; // Read values passed on state
+
+  const navigate = useNavigate();
 
   const handledays = async (event, newdays) => {
     console.log(newdays)
@@ -77,17 +89,38 @@ function NewGrade() {
 
 
   async function newGrado() {
-    console.log(Name)
-    console.log(Teacher)
-    console.log(Seccion)
-    console.log(Weeks)
-    console.log(startDate)
-    console.log(TimeStart)
-    console.log(TimeStart.$d.toLocaleString())
-    console.log(timeEnd)
-    console.log(timeEnd.$d)
-    console.log(days)
-    CreateNewGrade(Name,Teacher,Seccion,Weeks,startDate,TimeStart.$d.toLocaleString(),timeEnd.$d.toLocaleString(),days)
+    
+    const respuesta = await CreateNewGrade(
+      Name,
+      Teacher,
+      Seccion,
+      Weeks,
+      startDate?.$d.toLocaleDateString(),
+      TimeStart?.$d.toLocaleTimeString('en-GB'),
+      timeEnd?.$d.toLocaleTimeString('en-GB'),
+      days)
+      console.log(respuesta)
+      if (respuesta[0]==400) {
+        seterror(true)
+        setTimeout(() => {
+          seterror(false)
+        }, 5000);
+        seterrorText(respuesta[1].msg)
+      }else if (respuesta[0]==201) {
+        setName()
+        setTeacher()
+        setSeccion()
+        setWeeks()
+        setstartDate()
+        setTimeStart()
+        setTimeEnd()
+        setdays()
+        setSuccess(true)
+        setTimeout(() => {
+          setSuccess(false)
+        }, 5000);
+        seterrorText(respuesta[1].msg)
+      }
   }
 
   async function getteachers() {
@@ -103,7 +136,7 @@ function NewGrade() {
   return(
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id } });}}>
         <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
@@ -111,7 +144,7 @@ function NewGrade() {
       </Typography>
 </Toolbar>
 
-<Box sx={{ width: '650px', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}}alignItems="center">
+<Box sx={{ display:"flex",flexDirection:"column",width: '650px', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}}alignItems="center">
 
 
     <Grid container spacing={2} sx={{ padding: '25px',}}>
@@ -202,9 +235,9 @@ function NewGrade() {
                              label="Grado"
                              onChange={handleSeccion}
                            >
-                                <MenuItem value={10}>A</MenuItem>
-                                <MenuItem value={20}>B</MenuItem>
-                                <MenuItem value={30}>C</MenuItem>        
+                                <MenuItem value={'A'}>A</MenuItem>
+                                <MenuItem value={'B'}>B</MenuItem>
+                                <MenuItem value={'C'}>C</MenuItem>        
                        </Select>
                    </FormControl>
                    
@@ -270,11 +303,22 @@ function NewGrade() {
         
 
     <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
-        <Button onClick={()=>{newGrado()}} variant="contained">Continue</Button>
+        <Button onClick={()=>{newGrado()}} variant="contained">Done</Button>
     </div>
+
+    
+
+
 </Grid>
+{error&&<Alert severity="error" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>
+          {errorText}
+          </Alert>}
+
+
+          {Success&&<Alert severity="success">{errorText}</Alert>}
 
 </Box>
+
 </>
   );
 }
