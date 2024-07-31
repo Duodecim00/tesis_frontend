@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import { getStundetsByTeacher } from '../api/alumno.api';
 import { getstudentgrade } from "../api/curso.api";
 import { colors } from '@mui/material';
+import Alert from '@mui/material/Alert';
 
 const columns = [
 
@@ -95,26 +96,34 @@ function Forminput(id) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows,setrows] = React.useState([])
-
+  const [error,seterror] = React.useState(false)
+  const [errorText,seterrorText] = React.useState('error')
 
   async function getstudentsdata() {
     setrows([])
     const respuesta = await getStundetsByTeacher(id.id)
-    for (let index = 0; index < respuesta.length; index++) {
-      const nombre = respuesta[index].nombrecompleto.split(' ');
-      const result = await getstudentgrade(respuesta[index].id_curso)
+    console.log(respuesta[1][0])
+    if (respuesta[0]==400) {
+      seterror(true)
+      seterrorText(respuesta[1].msg)
+    }else if (respuesta[0]==200) {
+      console.log(respuesta)
+      for (let index = 0; index < respuesta[1].length; index++) {
+      const nombre = respuesta[1][index].nombrecompleto.split(' ');
+      const result = await getstudentgrade(respuesta[1][index].id_curso)
       const student ={
-        ID:respuesta[index].cedula,
+        ID:respuesta[1][index].cedula,
         LName:nombre[1],
         FName:nombre[0],
-        Gender:respuesta[0].genero,
-        Age:respuesta[0].edad,
+        Gender:respuesta[1][index].genero,
+        Age:respuesta[1][index].edad,
         Grade:result[0].nombreCurso,
         Section:result[0].seccion,
-        Attendance:'65%'
+        Attendance:`${Math.trunc(respuesta[1][index].percentage)}%`
       }
       setrows([...rows, student]);
       
+    }
     }
   }
 
@@ -133,7 +142,7 @@ function Forminput(id) {
 
   return (
   
-   <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+   <Paper sx={{ width: '100%', overflow: 'hidden'}}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -177,6 +186,7 @@ function Forminput(id) {
           </TableBody>
         </Table>
       </TableContainer>
+      
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
@@ -186,6 +196,10 @@ function Forminput(id) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+
+{error&&<Alert severity="error" style={{position:'relative',bottom:50,marginLeft:"auto",marginRight:"auto"}}>
+          {errorText}
+          </Alert>}
     </Paper>
    
   )
