@@ -4,6 +4,7 @@ import RegisterStudent from './pages/RegisterStudent.jsx';
 import RegisterTeacher from './pages/RegisterTeacher.jsx';
 import Attendace from './pages/Attendace.jsx';
 import Login from './pages/login.jsx';
+import Fingerprint from './pages/Fingerprint.jsx';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/RegisterT" element={<RegisterTeacher/>} />
         <Route path="/NewGrade" element={<NewGrade/>} />
         <Route path="/Attendace" element={<Attendace/>} />
+        <Route path="/fingerprint" element={<Fingerprint/>} />
         <Route path="/" element={<Login/>} />
       </Routes>
     </Router>
