@@ -24,9 +24,15 @@ import {
   GetGrades,
   getsections
 } from "../api/curso.api";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 function RegisterStudent() {
+
+  const {state} = useLocation();
+  const { id } = state; // Read values passed on state
+
+  const navigate = useNavigate();
 
 
   const [FirstName,setFirstName] = useState("")
@@ -84,7 +90,7 @@ function RegisterStudent() {
 
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id } });}}>
         <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
