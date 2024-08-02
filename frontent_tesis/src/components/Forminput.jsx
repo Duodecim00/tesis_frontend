@@ -7,8 +7,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { getStundetsByTeacher } from '../api/alumno.api';
-import { getstudentgrade } from "../api/curso.api";
+import { getallstudents, getStundetsByTeacher } from '../api/alumno.api';
+import { GetGrades, getstudentgrade, getTeacherGrades } from "../api/curso.api";
 import { Box, CircularProgress, colors, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import SearchIcon from '@mui/icons-material/Search';
@@ -71,7 +71,7 @@ const columns = [
 ];
 
 
-function Forminput(id) {
+function Forminput(id,rol) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows,setrows] = React.useState([])
@@ -80,10 +80,15 @@ function Forminput(id) {
   const [errorText,seterrorText] = React.useState('error')
   const [loading,setloading] = React.useState(true)
   const [search, setSearch] = React.useState("")
+  const [grades,setgrades] = React.useState([])
+  const [grade,setgrade] = React.useState("")
+
+
+
   async function getstudentsdata() {
-    const respuesta = await getStundetsByTeacher(id.id)
-   
-    const data = []
+    if (id.rol===0) {
+      const respuesta = await getallstudents()
+      const data = []
     if (respuesta[0]==400) {
       seterror(true)
       seterrorText(respuesta[1].msg)
@@ -109,10 +114,60 @@ function Forminput(id) {
     }
     setrows(data)
     }
+    }else{
+      const respuesta = await getStundetsByTeacher(id.id)
+      const data = []
+    if (respuesta[0]==400) {
+      seterror(true)
+      seterrorText(respuesta[1].msg)
+    }else if (respuesta[0]==200) {
+      
+      for (let index = 0; index < respuesta[1].length; index++) {
+      const nombre = respuesta[1][index].nombrecompleto.split(' ');
+     
+      const result = await getstudentgrade(respuesta[1][index].id_curso)
+
+      const student ={
+        ID:respuesta[1][index].cedula,
+        LName:nombre[1],
+        FName:nombre[0],
+        Gender:respuesta[1][index].genero,
+        Age:respuesta[1][index].edad,
+        Grade:result[0].nombreCurso,
+        Section:result[0].seccion,
+        Attendance:`${Math.trunc(respuesta[1][index].percentage)}%`
+      }
+      data.push(student)
+      
+    }
+    setrows(data)
+    }
+    }
+    
+  }
+
+  async function setteachersGrades() {
+    if (id.rol==0) {
+      const respuesta = await GetGrades()
+    console.log(respuesta)
+    if (respuesta[0]==400) {
+    }else if (respuesta[0]==200) {
+      setgrades(respuesta[1])
+    }
+    }else{
+      const respuesta = await getTeacherGrades(id.id)
+      console.log(respuesta)
+      if (respuesta[0]==400) {
+      }else if (respuesta[0]==200) {
+        setgrades(respuesta[1])
+      }
+    }
+    
   }
 
   React.useEffect(()=>{
     getstudentsdata()
+    setteachersGrades()
   },[])
 
 
@@ -140,6 +195,31 @@ function Forminput(id) {
     if (data.filter(item => item.ID.toLowerCase().includes(lowerSearchCode)).length==0) {
     }
     return data.filter(item => (item.ID.toLowerCase().includes(lowerSearchCode) || item.FName.toLowerCase().includes(lowerSearchCode) || item.LName.toLowerCase().includes(lowerSearchCode)))
+  }
+
+
+  React.useEffect(() => {
+    const timeout = setTimeout(async () => {
+      if(rows.length != 0) {
+        await setrowsfiltred(SearchByGrade(rows))
+        setPage(0);
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }
+  , [grade]) 
+
+//funcion para filtar la data
+  const SearchByGrade = (data) => {
+    if(!data) return []
+    if(!grade) return data
+    // return data.filter(item => item.packing_code.includes(searchCode))
+    // set all to lower case
+    const lowerSearchCode = grade.toLowerCase()
+
+    if (data.filter(item => item.ID.toLowerCase().includes(lowerSearchCode)).length==0) {
+    }
+    return data.filter(item => (item.Grade.toLowerCase().includes(lowerSearchCode)))
   }
 
   const handleChangePage = (event, newPage) => {
@@ -176,16 +256,21 @@ function Forminput(id) {
                            <Select
                              labelId="demo-simple-select-label"
                              id="demo-simple-select"
-                             
+                             value={grade}
                              label="Grades"
-                             
+                             onChange={(e)=>{
+                              setgrade(e.target.value)  
+                             }}
                            >
-                                <MenuItem value={10}>1.º</MenuItem>
-                                <MenuItem value={20}>2.º</MenuItem>
-                                <MenuItem value={30}>3.º</MenuItem>
-                                <MenuItem value={40}>4.º</MenuItem>
-                                <MenuItem value={50}>5.º</MenuItem>
-                                <MenuItem value={60}>6.º</MenuItem>
+                            <MenuItem value={""}>Todos</MenuItem>
+                            {
+                              grades&&grades.map((grade)=>{
+                                return(
+                                <MenuItem key={grade._id} value={grade.nombreCurso}>{grade.nombreCurso}</MenuItem>
+                                )
+                              })
+                            }
+                                
                                 
                        </Select>
                    </FormControl>

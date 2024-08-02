@@ -53,7 +53,6 @@ function Login() {
 
   async function ingresar() {
     const respuesta = await LogIn(User,password)
-    console.log(respuesta)
     if (respuesta[0]==400) {
       seterror(true)
       setTimeout(() => {
@@ -61,7 +60,12 @@ function Login() {
       }, 5000);
       seterrorText(respuesta[1])
     }else if (respuesta[0]==201) {
-      navigate("/Attendace", { state: { id: respuesta[1].teacher._id } });
+      if (respuesta[1].rol==0) {
+        navigate("/Attendace", { state: { id: respuesta[1].user._id, rol: respuesta[1].rol } });
+      }else{
+        navigate("/Attendace", { state: { id: respuesta[1].teacher._id, rol: respuesta[1].rol } });
+      }
+      
     }
   }
 

@@ -50,3 +50,23 @@ export async function NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
         } 
       }
   
+
+      export async function getallstudents() {
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          }}
+          try {
+            const response = await fetch(`http://localhost:3000/getallstudents/`,requestOptions);
+            if (!response.ok) {
+              const json = await response.json();
+              return [response.status,json]
+            }
+            const json = await response.json();
+            return [response.status,json]
+          } catch (error) {
+            console.error(error.message);
+          } 
+        }

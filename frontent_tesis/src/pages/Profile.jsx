@@ -14,10 +14,16 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DateCalendarServerRequest from '../components/calendar'
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Profile() {
 
     const [age, setAge] = useState('');
+
+  const {state} = useLocation();
+  const { id,rol } = state; // Read values passed on state
+
+  const navigate = useNavigate();
 
     const handleChange = (event) => {
       setAge(event.target.value);

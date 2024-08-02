@@ -34,11 +34,14 @@ export async function getsections(id){
       try {
         const response = await fetch('http://localhost:3000/getGrades',requestOptions);
         if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
+          const json = await response.json();
+        console.log(json)
+        return [response.status,json]
         }
     
         const json = await response.json();
-        return json
+        console.log(json)
+        return [response.status,json]
       } catch (error) {
         console.error(error.message);
       }
@@ -88,6 +91,30 @@ export async function getsections(id){
         console.log(json)
         return [response.status,json]
         }
+        const json = await response.json();
+        console.log(json)
+        return [response.status,json]
+      } catch (error) {
+        console.error(error.message);
+      }
+  }
+
+
+  export async function getTeacherGrades(id) {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }}
+      try {
+        const response = await fetch(`http://localhost:3000/getTeacherGrades/${id}`,requestOptions);
+        if (!response.ok) {
+          const json = await response.json();
+        console.log(json)
+        return [response.status,json]
+        }
+    
         const json = await response.json();
         console.log(json)
         return [response.status,json]

@@ -25,7 +25,7 @@ function RegisterTeacher() {
   const [Password,setPassword] = useState("")
 
   const {state} = useLocation();
-  const { id } = state; // Read values passed on state
+  const { id,rol } = state; // Read values passed on state
 
   const [Success,setSuccess] = useState(false)
   const [error,seterror] = useState(false)
