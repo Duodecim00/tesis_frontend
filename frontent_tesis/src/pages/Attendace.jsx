@@ -53,16 +53,15 @@ Attendace Traker
 
 </Toolbar>
 
-<Box sx={{ width: '90%', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}}alignItems="center">
+<Box sx={{ width: '90%', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1, display:"flex",flexDirection:"row"}}alignItems="center">
 
-9
     <Grid container spacing={2} sx={{ padding: '25px',}}>
       
         <Grid item xs={12} >
             <Grid >
               <div style={{marginBottom: 30}}>
                     <Stack direction="row" spacing={2}>   
-                    <FormControl sx={{width: '20%'}}>
+                    {/* <FormControl sx={{width: '20%'}}>
                        <InputLabel id="demo-simple-select-label">Grado</InputLabel>
                            <Select
                              labelId="demo-simple-select-label"
@@ -97,7 +96,7 @@ Attendace Traker
                                 <MenuItem value={60}>6.º</MenuItem>
                                 
                        </Select>
-                   </FormControl>
+                   </FormControl> */}
                     </Stack>
               </div>
             </Grid>

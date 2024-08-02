@@ -9,9 +9,9 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { getStundetsByTeacher } from '../api/alumno.api';
 import { getstudentgrade } from "../api/curso.api";
-import { colors } from '@mui/material';
+import { Box, CircularProgress, colors, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
-
+import SearchIcon from '@mui/icons-material/Search';
 const columns = [
 
   { 
@@ -70,47 +70,30 @@ const columns = [
   },
 ];
 
-// function createData(ID, LName,FName,Advisor,Grade, Section,Email,Attendance) {
-//   return { _id, LName,FName,Advisor,Grade,Section,Email,Attendance };
-// }
-
-// const rows = [
-//   createData('India', 'IN', 1324171354, 3287263,2222,3333,44,55),
-//   createData('China', 'CN', 1403500365, 9596961),
-//   createData('Italy', 'IT', 60483973, 301340),
-//   createData('United States', 'US', 327167434, 9833520),
-//   createData('Canada', 'CA', 37602103, 9984670),
-//   createData('Australia', 'AU', 25475400, 7692024),
-//   createData('Germany', 'DE', 83019200, 357578),
-//   createData('Ireland', 'IE', 4857000, 70273),
-//   createData('Mexico', 'MX', 126577691, 1972550),
-//   createData('Japan', 'JP', 126317000, 377973),
-//   createData('France', 'FR', 67022000, 640679),
-//   createData('United Kingdom', 'GB', 67545757, 242495),
-//   createData('Russia', 'RU', 146793744, 17098246),
-//   createData('Nigeria', 'NG', 200962417, 923768),
-//   createData('Brazil', 'BR', 210147125, 8515767),
-// ];
 
 function Forminput(id) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows,setrows] = React.useState([])
+  const [rowsfiltred,setrowsfiltred] = React.useState([])
   const [error,seterror] = React.useState(false)
   const [errorText,seterrorText] = React.useState('error')
-
+  const [loading,setloading] = React.useState(true)
+  const [search, setSearch] = React.useState("")
   async function getstudentsdata() {
-    setrows([])
     const respuesta = await getStundetsByTeacher(id.id)
-    console.log(respuesta[1][0])
+   
+    const data = []
     if (respuesta[0]==400) {
       seterror(true)
       seterrorText(respuesta[1].msg)
     }else if (respuesta[0]==200) {
-      console.log(respuesta)
+      
       for (let index = 0; index < respuesta[1].length; index++) {
       const nombre = respuesta[1][index].nombrecompleto.split(' ');
+     
       const result = await getstudentgrade(respuesta[1][index].id_curso)
+
       const student ={
         ID:respuesta[1][index].cedula,
         LName:nombre[1],
@@ -121,15 +104,43 @@ function Forminput(id) {
         Section:result[0].seccion,
         Attendance:`${Math.trunc(respuesta[1][index].percentage)}%`
       }
-      setrows([...rows, student]);
+      data.push(student)
       
     }
+    setrows(data)
     }
   }
 
   React.useEffect(()=>{
     getstudentsdata()
   },[])
+
+
+  //chequea cada vez que se cambia el valor search y filtra la data
+  React.useEffect(() => {
+    const timeout = setTimeout(async () => {
+      if(rows.length != 0) {
+        await setrowsfiltred(filterDataBySearch(rows))
+        setPage(0);
+        setloading(false)
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }
+  , [rows, search]) 
+
+//funcion para filtar la data
+  const filterDataBySearch = (data) => {
+    if(!data) return []
+    if(!search) return data
+    // return data.filter(item => item.packing_code.includes(searchCode))
+    // set all to lower case
+    const lowerSearchCode = search.toLowerCase()
+
+    if (data.filter(item => item.ID.toLowerCase().includes(lowerSearchCode)).length==0) {
+    }
+    return data.filter(item => (item.ID.toLowerCase().includes(lowerSearchCode) || item.FName.toLowerCase().includes(lowerSearchCode) || item.LName.toLowerCase().includes(lowerSearchCode)))
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -141,9 +152,50 @@ function Forminput(id) {
   };
 
   return (
+  <>
   
+  <FormControl sx={{width: '20%',marginBottom:"10px",marginRight:"10px"}}>
+
+  <TextField
+        id="input-with-icon-textfield"
+        label="Search"
+        value={search}
+        onChange={(e)=>{console.log(search)
+          setSearch(e.target.value)}}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+      />
+                   </FormControl>
+                   <FormControl sx={{width: '20%'}}>
+                       <InputLabel id="demo-simple-select-label">Grades</InputLabel>
+                           <Select
+                             labelId="demo-simple-select-label"
+                             id="demo-simple-select"
+                             
+                             label="Grades"
+                             
+                           >
+                                <MenuItem value={10}>1.º</MenuItem>
+                                <MenuItem value={20}>2.º</MenuItem>
+                                <MenuItem value={30}>3.º</MenuItem>
+                                <MenuItem value={40}>4.º</MenuItem>
+                                <MenuItem value={50}>5.º</MenuItem>
+                                <MenuItem value={60}>6.º</MenuItem>
+                                
+                       </Select>
+                   </FormControl>
+
    <Paper sx={{ width: '100%', overflow: 'hidden'}}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+
+   
+   
+
+      <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -159,7 +211,7 @@ function Forminput(id) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows&&rows
+            {rowsfiltred&&rowsfiltred
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
@@ -186,11 +238,17 @@ function Forminput(id) {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {!error&&loading&&
+            <Box sx={{ display: 'flex', width:"100%",marginTop:"10px" }}>
+            <CircularProgress sx={{marginLeft:"auto",marginRight:"auto"}} />
+          </Box>
+           }
       
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={rowsfiltred.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -202,6 +260,7 @@ function Forminput(id) {
           </Alert>}
     </Paper>
    
+    </>
   )
 }
 
