@@ -1,6 +1,5 @@
 
 import * as React from 'react';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
@@ -15,12 +14,9 @@ import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Alert from '@mui/material/Alert';
-import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import Lockpic from '../assets/3427189.png'
-import { 
-  LogIn
- } from "../api/user.api";
+import { LogIn } from "../api/user.api";
 
 import './login.css';
 
@@ -55,7 +51,7 @@ function Login() {
     const navigate = useNavigate();
   
 
-  async function ingresar(params) {
+  async function ingresar() {
     const respuesta = await LogIn(User,password)
     console.log(respuesta)
     if (respuesta[0]==400) {

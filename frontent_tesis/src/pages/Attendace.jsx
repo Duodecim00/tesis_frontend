@@ -1,10 +1,8 @@
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-
 import theme from '../color/color';
 import Button from '@mui/material/Button';
-
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,13 +12,14 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Forminput from '../components/Forminput';
-
 import './register.css';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getStundetsByTeacher } from '../api/alumno.api';
-
-
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import GradeIcon from '@mui/icons-material/Grade';
+import FaceIcon from '@mui/icons-material/Face';
 
 function Attendace() {
   const {state} = useLocation();
@@ -38,16 +37,18 @@ Attendace Traker
 </Typography>
     <Box sx={{ flexGrow: 1 }} />
 <Stack direction="row" spacing={2}>   
-    <Button variant="contained" startIcon={<DeleteIcon />}>
+    <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id } });}}>
         New Student
     </Button>
+
     <Button variant="contained" startIcon={<DeleteIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
+      
         New Grade
     </Button>
-    <Button variant="contained" startIcon={<DeleteIcon />}>
+    <Button variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: id } });}}>
         New Teacher
     </Button>
-    <Button variant="contained" startIcon={<DeleteIcon />}>
+    <Button variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
         Exit 
     </Button>
 </Stack>

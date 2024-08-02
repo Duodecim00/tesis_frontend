@@ -11,60 +11,28 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import './register.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
 function RegisterTeacher() {
- /* async function probando() {
-    const url = "http://localhost:3000/newstudent";
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        nombrecompleto:${nombrecompleto},
-        cedula:${cedula},
-        grado:${grado},
-        seccion:${seccion},
-      })}
-  try {
-    const response = await fetch(url,requestOptions);
-    if (!response.ok) {
-      throw new Error(Response status: ${response.status});
-    }
-
-    const json = await response.json();
-    console.log(json);
-
-
-      try {
-        const changemode = await fetch("http://192.168.1.106/off")
-        console.log(changemode)
-      } catch (error) {
-        console.log(error.message)
-      }
-
-    
-    
-  } catch (error) {
-    console.error(error.message);
-  }
-  }*/
 
   const [FirstName,setFirstName] = useState("")
   const [LastName,setLastName] = useState("")
   const [UserName,setUserName] = useState("")
   const [Password,setPassword] = useState("")
 
+  const {state} = useLocation();
+  const { id } = state; // Read values passed on state
+
+  const navigate = useNavigate();
 
 
   return(
 
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id } });}}>
         <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
