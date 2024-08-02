@@ -40,7 +40,9 @@ Attendace Traker
     <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id } });}}>
         New Student
     </Button>
-    <Button variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
+
+    <Button variant="contained" startIcon={<DeleteIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
+      
         New Grade
     </Button>
     <Button variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: id } });}}>
