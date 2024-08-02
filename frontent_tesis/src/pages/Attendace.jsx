@@ -23,10 +23,13 @@ import FaceIcon from '@mui/icons-material/Face';
 
 function Attendace() {
   const {state} = useLocation();
-  const { id } = state; // Read values passed on state
+  const { id,rol } = state; // Read values passed on state
 
   const navigate = useNavigate();
 
+  useEffect(()=>{
+    console.log(rol)
+  },[])
 
   return(
 
@@ -37,17 +40,23 @@ Attendace Traker
 </Typography>
     <Box sx={{ flexGrow: 1 }} />
 <Stack direction="row" spacing={2}>   
+
+  {rol==0&&
+  <>
     <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id } });}}>
         New Student
     </Button>
 
-    <Button variant="contained" startIcon={<DeleteIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
+    <Button variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
       
         New Grade
     </Button>
     <Button variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: id } });}}>
         New Teacher
     </Button>
+    </>
+}
+    
     <Button variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
         Exit 
     </Button>
@@ -103,7 +112,7 @@ Attendace Traker
               </div>
             </Grid>
               <Grid container >
-                 <Forminput id={id}/>
+                 <Forminput id={id} rol={rol}/>
               </Grid>
         </Grid>
 </Grid>

@@ -31,7 +31,7 @@ import { Alert } from '@mui/material';
 function RegisterStudent() {
 
   const {state} = useLocation();
-  const { id } = state; // Read values passed on state
+  const { id,rol } = state; // Read values passed on state
 
   const navigate = useNavigate();
 
