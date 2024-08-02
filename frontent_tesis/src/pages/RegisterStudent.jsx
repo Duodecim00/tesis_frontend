@@ -25,6 +25,7 @@ import {
   getsections
 } from "../api/curso.api";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Alert } from '@mui/material';
 
 
 function RegisterStudent() {
@@ -47,6 +48,9 @@ function RegisterStudent() {
 
   const [enabledgrade,setenabledgrade] = useState(true)
   const [cantidadSeccion,setcantidadSeccion] = useState(0)
+
+  const [error,seterror] = useState(false)
+  const [errorText,seterrorText] = useState('error')
   
   const handleGrado = (event) => {
       setGrado(event.target.value);
@@ -70,8 +74,29 @@ function RegisterStudent() {
       }
     }
 
-    function Continue() {
-      NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
+    async function Continue() {
+      const respuesta = await NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
+      if (respuesta[0]==400) {
+        seterror(true)
+        setTimeout(() => {
+          seterror(false)
+        }, 5000);
+        seterrorText(respuesta[1].msg)
+      }else if (respuesta[0]==201) {
+        const url = "http://192.168.1.107/off";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.error(error.message);
+  }
+        navigate("/fingerprint", { state: { id: id } });
+      }
     }
 
     async function start() {
@@ -98,11 +123,11 @@ function RegisterStudent() {
       </Typography>
 </Toolbar>
 
-<Box sx={{ width: '650px', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}}alignItems="center">
+<Box sx={{ width: '650px', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1, display:"flex",flexDirection:"column"}}alignItems="center">
 
     
 
-    <Grid container spacing={2} sx={{ padding: '25px',}}>
+    <Grid container spacing={2} sx={{ padding: '25px', display:"flex",flexDirection:"column"}}>
       
         <Grid item xs={12} >
             <Grid >
@@ -146,7 +171,7 @@ function RegisterStudent() {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <TextField sx={{width: '100%' }} id="outlined-basic" label="Age" variant="outlined" value={Age} onChange={(e)=>{setAge(e.target.value)}}/>
+                        <TextField inputProps={{ type: 'number'}} sx={{width: '100%' }} id="outlined-basic" label="Age" variant="outlined" value={Age} onChange={(e)=>{setAge(e.target.value)}}/>
                     </Grid>
 
 
@@ -219,7 +244,15 @@ function RegisterStudent() {
     <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
         <Button onClick={()=>{Continue()}} variant="contained">Continue</Button>
     </div>
+
+    
+
+
 </Grid>
+
+{error&&<Alert severity="error" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>
+          {errorText}
+          </Alert>}
 
 </Box>
 </>

@@ -18,12 +18,13 @@ export async function NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
         const response = await fetch('http://localhost:3000/newstudent',requestOptions);
         if (!response.ok) {
           const json = await response.json();
-          console.log(json);
-          throw new Error(`Response status: ${response.status}`);
+            console.log(json)
+            return [response.status,json]
         }
     
         const json = await response.json();
-        console.log(json);
+            console.log(json)
+            return [response.status,json]
       } catch (error) {
         console.error(error.message);
       } 
@@ -40,12 +41,9 @@ export async function NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
           const response = await fetch(`http://localhost:3000/getStundetsByTeacher/${id}`,requestOptions);
           if (!response.ok) {
             const json = await response.json();
-            console.log(json)
             return [response.status,json]
           }
-      
           const json = await response.json();
-          console.log(json)
           return [response.status,json]
         } catch (error) {
           console.error(error.message);

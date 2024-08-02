@@ -12,6 +12,8 @@ import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import './register.css';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { newTeacher } from '../api/profesor.api';
+import { Alert } from '@mui/material';
 
 
 
@@ -25,7 +27,33 @@ function RegisterTeacher() {
   const {state} = useLocation();
   const { id } = state; // Read values passed on state
 
+  const [Success,setSuccess] = useState(false)
+  const [error,seterror] = useState(false)
+  const [errorText,seterrorText] = useState('ErrorMsg')
+
   const navigate = useNavigate();
+
+  async function continuar(params) {
+    console.log(FirstName,LastName,UserName,Password)
+   const respuesta = await newTeacher(FirstName,LastName,UserName,Password)
+   if (respuesta[0]==400) {
+    seterror(true)
+    setTimeout(() => {
+      seterror(false)
+    }, 5000);
+    seterrorText(respuesta[1].msg)
+  }else if (respuesta[0]==200) {
+    setFirstName("")
+    setLastName("")
+    setUserName("")
+    setPassword("")
+    setSuccess(true)
+    setTimeout(() => {
+      setSuccess(false)
+    }, 5000);
+    seterrorText(respuesta[1].msg)
+  }
+  }
 
 
   return(
@@ -54,26 +82,32 @@ function RegisterTeacher() {
             </Grid>
               <Grid container spacing={1}>
                   <Grid item xs={6}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" valor={FirstName} setvalor={setFirstName} />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" value={FirstName} onChange={(e)=>{setFirstName(e.target.value)}} />
                   </Grid>
 
                   <Grid item xs={6}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" valor={LastName} setvalor={setLastName} />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" value={LastName} onChange={(e)=>{setLastName(e.target.value)}} />
                   </Grid>
                   <Grid item xs={12}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="User Name" variant="outlined" valor={UserName} setvalor={setUserName} />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="User Name" variant="outlined" value={UserName} onChange={(e)=>{setUserName(e.target.value)}} />
                   </Grid>
                   <Grid item xs={12}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Password" variant="outlined" valor={Password} setvalor={setPassword} />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Password" variant="outlined" value={Password} onChange={(e)=>{setPassword(e.target.value)}} />
                   </Grid>
               </Grid>
         </Grid>
 
 
     <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
-        <Button variant="contained">Continue</Button>
+        <Button variant="contained" onClick={()=>{continuar()}}>Continue</Button>
     </div>
 </Grid>
+
+{error&&<Alert severity="error">
+          {errorText}
+          </Alert>}
+
+{Success&&<Alert severity="success">{errorText}</Alert>}
 
 </Box>
 </>

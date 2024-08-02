@@ -8,28 +8,27 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Fingerprint() {
 
+  const {state} = useLocation();
+  const { id } = state; // Read values passed on state
+
+  const navigate = useNavigate();
+
   return(
 <>
-<Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-        <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
-      </IconButton>
-      <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
-        New Teacher
-      </Typography>
-</Toolbar>
 
 <Box sx={{ width: '650px', backgroundColor: theme.palette.primary.light, marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}} alignItems="center">
 
     
-<Grid container spacing={2} sx={{ padding: '25px',}}>
+<Grid container spacing={2} sx={{ padding: '25px', marginTop:"25px"}}>
       
       <Grid item xs={12} >
             <Grid  container spacing={2}>
                 <Grid xs={12}style={{ textAlign: 'center'}} >
+                <h2 style={{color: theme.palette.primary.dark,marginLeft:'auto', marginRight:'auto',}}>Please place finger in the Scanner</h2>
                 <FingerprintIcon sx={{color: theme.palette.primary.dark,margin:'auto', width: '50%', height: 'auto' }}/>
                 </Grid>
 
@@ -39,7 +38,7 @@ function Fingerprint() {
 
 
   <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
-      <Button variant="contained">Complete registration</Button>
+      <Button color='success' variant="contained" onClick={()=>{navigate("/Attendace", { state: { id: id } });}}>Complete registration</Button>
   </div>
 </Grid>
 
