@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import Badge from '@mui/material/Badge';
+import theme from '../color/color';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay } from '@mui/x-date-pickers/PickersDay';
@@ -23,7 +24,7 @@ function fakeFetch(date, { signal }) {
       const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
 
       resolve({ daysToHighlight });
-    }, 500);
+    }, 100);
 
     signal.onabort = () => {
       clearTimeout(timeout);
@@ -41,12 +42,14 @@ function ServerDay(props) {
     !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
 
   return (
-    <Badge
+    <Badge 
+    
       key={props.day.toString()}
       overlap="circular"
       badgeContent={isSelected ? '🌚' : undefined}
     >
-      <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
+      <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   sx={{backgroundColor: '#424542',color: '#fff'}} />
+
     </Badge>
   );
 }
@@ -94,8 +97,9 @@ export default function DateCalendarServerRequest() {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} >
       <DateCalendar
+      sx={{backgroundColor: theme.palette.primary.dark,borderRadius: 1}}
         defaultValue={initialValue}
         loading={isLoading}
         onMonthChange={handleMonthChange}
