@@ -14,11 +14,13 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DateCalendarServerRequest from '../components/calendar'
-import { useLocation, useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
+
+//import { useLocation, useNavigate } from 'react-router-dom';
 
 function Profile() {
 
-    const [age, setAge] = useState('');
+ /*   const [age, setAge] = useState('');
 
   const {state} = useLocation();
   const { id,rol } = state; // Read values passed on state
@@ -27,7 +29,12 @@ function Profile() {
 
     const handleChange = (event) => {
       setAge(event.target.value);
-    };
+    };*/
+
+    const [Validation, setValidation] = useState('');
+
+    const handleChange = (event) => {
+      setValidation(event.target.value);}
 
   return(
 <>
@@ -70,9 +77,9 @@ function Profile() {
                             <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={age}
+                            /*value={age}
                             label="Age"
-                            onChange={handleChange}
+                            onChange={handleChange}*/
                             >
                             <MenuItem value={10}>Ten</MenuItem>
                             <MenuItem value={20}>Twenty</MenuItem>
@@ -86,9 +93,9 @@ function Profile() {
                             <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={age}
+                            /*value={age}
                             label="Age"
-                            onChange={handleChange}
+                            onChange={handleChange}*/
                             >
                             <MenuItem value={10}>Ten</MenuItem>
                             <MenuItem value={20}>Twenty</MenuItem>
@@ -109,11 +116,47 @@ function Profile() {
 <Box sx={{ width: '90%', marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}} alignItems="center">
 
 <Grid container spacing={2} sx={{ padding: '25px'}} >
-                <Grid item xs={6} >
-                  <div style={{ backgroundColor: theme.palette.primary.main}}>
-                    <DateCalendarServerRequest />
-                  </div>
-                    
+                <Grid item xs={4} sx={{ margin: 'auto'}}  >
+                    <DateCalendarServerRequest />  
+                </Grid>
+                <Grid item xs={8} sx={{ margin: 'auto'}} >
+                    <Box sx={{ backgroundColor: theme.palette.primary.light, borderRadius: 1}} alignItems="center">
+                          <Grid container spacing={2} sx={{ padding: '25px'}}>
+                          <Grid item xs={3}>
+                                <FormControl fullWidth  >
+                                    <InputLabel id="demo-simple-select-label">count day</InputLabel>
+                                      <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={Validation}
+                                        label="Validation"
+                                        onChange={handleChange}
+                                      >
+                                        <MenuItem value={10}>on time</MenuItem>
+                                        <MenuItem value={20}>late</MenuItem>
+                                        <MenuItem value={10}>non-attendant</MenuItem>
+                                        <MenuItem value={20}>do not validate</MenuItem>
+                                      </Select>
+                                </FormControl>
+                          </Grid>
+                          <Grid item xs={9}>
+                          <TextField sx={{width: '100%' }} id="outlined-basic" label="reason" variant="outlined" />
+                          </Grid>
+                          <Grid item xs={12}>
+                              <TextField sx={{width: '100%' }}
+                              id="outlined-multiline-static"
+                              label="description"
+                              multiline
+                              rows={5}
+                              defaultValue="Default Value"
+                            />
+                          </Grid>
+                                <div style={{margin: '5px', marginLeft: 'auto',marginRight: 'auto'}}>
+                                  <Button variant="contained" style={{ marginLeft: '10px',marginRight: '10px'}}>save</Button>
+                                  <Button variant="contained" style={{ marginLeft: '10px',marginRight: '10px'}}>Delete</Button>
+                                </div>
+                        </Grid>
+                    </Box>
                 </Grid>
 </Grid>
 </Box>
