@@ -70,3 +70,23 @@ export async function NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
             console.error(error.message);
           } 
         }
+
+        export async function getStudentByID(id) {
+          const requestOptions = {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            }}
+            try {
+              const response = await fetch(`http://localhost:3000/getStudentByID/${id}`,requestOptions);
+              if (!response.ok) {
+                const json = await response.json();
+                return [response.status,json]
+              }
+              const json = await response.json();
+              return [response.status,json]
+            } catch (error) {
+              console.error(error.message);
+            } 
+          }

@@ -20,7 +20,7 @@ function App() {
         <Route path="/NewGrade" element={<NewGrade/>} />
         <Route path="/Attendace" element={<Attendace/>} />
         <Route path="/fingerprint" element={<Fingerprint/>} />
-        <Route path="/profile" element={<Profile/>} />
+        <Route path="/profile/:id" element={<Profile/>} />
         <Route path="/" element={<Login/>} />
       </Routes>
     </Router>

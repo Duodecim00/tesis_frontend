@@ -9,9 +9,11 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { getallstudents, getStundetsByTeacher } from '../api/alumno.api';
 import { GetGrades, getstudentgrade, getTeacherGrades } from "../api/curso.api";
-import { Box, CircularProgress, colors, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, colors, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import SearchIcon from '@mui/icons-material/Search';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import { useNavigate } from 'react-router-dom';
 const columns = [
 
   { 
@@ -19,6 +21,13 @@ const columns = [
     label: 'Student ID', 
     minWidth: 80,
     format: (value) => value.toFixed(2)
+  },
+  {
+    id: 'Cedula',
+    label: 'Cedula',
+    minWidth:  80,
+    align: 'right',
+    format: (value) => value.toFixed(2),
   },
 
   { id: 'LName', 
@@ -71,7 +80,7 @@ const columns = [
 ];
 
 
-function Forminput(id,rol) {
+function Forminput(id) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows,setrows] = React.useState([])
@@ -82,7 +91,7 @@ function Forminput(id,rol) {
   const [search, setSearch] = React.useState("")
   const [grades,setgrades] = React.useState([])
   const [grade,setgrade] = React.useState("")
-
+  const navigate = useNavigate();
 
 
   async function getstudentsdata() {
@@ -100,7 +109,8 @@ function Forminput(id,rol) {
       const result = await getstudentgrade(respuesta[1][index].id_curso)
 
       const student ={
-        ID:respuesta[1][index].cedula,
+        ID:respuesta[1][index]._id,
+        Cedula:respuesta[1][index].cedula,
         LName:nombre[1],
         FName:nombre[0],
         Gender:respuesta[1][index].genero,
@@ -128,7 +138,8 @@ function Forminput(id,rol) {
       const result = await getstudentgrade(respuesta[1][index].id_curso)
 
       const student ={
-        ID:respuesta[1][index].cedula,
+        ID:respuesta[1][index]._id,
+        Cedula:respuesta[1][index].cedula,
         LName:nombre[1],
         FName:nombre[0],
         Gender:respuesta[1][index].genero,
@@ -293,14 +304,18 @@ function Forminput(id,rol) {
                   {column.label}
                 </TableCell>
               ))}
+              <TableCell align={'center'}>
+                Options
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rowsfiltred&&rowsfiltred
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
+                console.log(row)
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.ID}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -309,7 +324,7 @@ function Forminput(id,rol) {
                           column.id=='Attendance'&& value.substring(0, value.length - 1) <= 50 ? colors.red[700] : 
                           column.id=='Attendance'&& value.substring(0, value.length - 1) <= 75 ? colors.yellow[700] :
                           column.id=='Attendance'&& value.substring(0, value.length - 1) > 75 ? colors.green[400] :
-                          'white',
+                          '',
                         }}>
                           {column.format && typeof value === 'number'
                             ? column.format(value)
@@ -317,6 +332,9 @@ function Forminput(id,rol) {
                         </TableCell>
                       );
                     })}
+                    <TableCell key={'Options'} align={"center"}>
+                      <Button onClick={()=>{navigate(`/profile/${row.ID}`, { state: { id: id.id } });}}> <EditCalendarIcon></EditCalendarIcon> </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })}
