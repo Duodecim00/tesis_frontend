@@ -1,6 +1,6 @@
 
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import theme from '../color/color';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -15,6 +15,8 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DateCalendarServerRequest from '../components/calendar'
 import Button from '@mui/material/Button';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { getStudentByID } from '../api/alumno.api';
 
 //import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -32,15 +34,53 @@ function Profile() {
     };*/
 
     const [Validation, setValidation] = useState('');
+    const {state} = useLocation();
+    const { id } = state; // Read values passed on state
+    const navigate = useNavigate();
+    const params = useParams()
+
+    const [FullName,setFullName] = useState("")
+    const [Fname,setFname] = useState("")
+    const [Lname,setLname] = useState("")
+    const [Urlfoto,setUrlfoto] = useState("")
+    const [Cedula,setCedula] = useState("")
+    const [Age,setAge] = useState("")
+    const [Gender,setGender] = useState("")
+    const [IdCurso,setIdCurso] = useState("")
+    const [IdHuella,setIdHuella] = useState("")
+    const [IdAlumno,setIdAlumno] = useState("")
 
     const handleChange = (event) => {
       setValidation(event.target.value);}
+
+      async function Getdata() {
+        const respuesta = await getStudentByID(params.id)
+        if (respuesta[0]==400) {
+         
+        }else if (respuesta[0]==200) {
+          setFullName(respuesta[1].nombrecompleto)
+          const nombres = FullName.split(' ');
+          setFname(nombres[0])
+          setLname(nombres[1])
+          setUrlfoto(respuesta[1].url_foto)
+          setCedula(respuesta[1].cedula)
+          setAge(respuesta[1].edad)
+          setGender(respuesta[1].genero)
+          setIdCurso(respuesta[1].id_curso)
+          setIdHuella(respuesta[1].idHuella)
+          setIdAlumno(respuesta[1]._id)
+        }
+      }
+      
+      useEffect(()=>{
+        Getdata()
+      },[])
 
   return(
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
       <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-        <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
+        <ArrowBackIcon sx={{color: theme.palette.primary.dark}} onClick={()=>{navigate("/Attendace", { state: { id: id } });}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
         Profile
@@ -54,7 +94,8 @@ function Profile() {
         <Grid item xs={2}>
             <Grid >
               <div style={{marginBottom: 30}}>
-                <Avatar style={{ marginLeft: 'auto',marginRight: 'auto', width: 132, height: 132 }} src="/broken-image.jpg" />
+                {!Urlfoto&&<Avatar style={{ marginLeft: 'auto',marginRight: 'auto', width: 132, height: 132 }} src= "/broken-image.jpg" />}
+                {Urlfoto&&<Avatar style={{ marginLeft: 'auto',marginRight: 'auto', width: 132, height: 132 }} src={Urlfoto}  />}
               </div>
             </Grid>
         </Grid>
@@ -62,49 +103,27 @@ function Profile() {
             
               <Grid container spacing={1}>
                   <Grid item xs={4}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" value={Fname} onChange={(e)=>{setFname(e.target.value)}} />
                   </Grid>
 
                   <Grid item xs={4}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" value={Lname} onChange={(e)=>{setLname(e.target.value)}}/>
                   </Grid>
                   <Grid item xs={4}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="User Name" variant="outlined"  />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Cedula" variant="outlined" value={Cedula} onChange={(e)=>{setCedula(e.target.value)}} />
                   </Grid>
                   <Grid item xs={3}>
                     <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                            <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            /*value={age}
-                            label="Age"
-                            onChange={handleChange}*/
-                            >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
+                    <TextField sx={{width: '100%' }} id="outlined-basic" label="Gender" variant="outlined" value={Gender} onChange={(e)=>{setGender(e.target.value)}} />
                     </FormControl>
                   </Grid>
                   <Grid item xs={2}>
                     <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                            <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            /*value={age}
-                            label="Age"
-                            onChange={handleChange}*/
-                            >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
+                    <TextField inputProps={{ type: 'number'}} sx={{width: '100%' }} id="outlined-basic" label="Age" variant="outlined" value={Age} onChange={(e)=>{setAge(e.target.value)}}/>
                     </FormControl>
                   </Grid>
                   <Grid item xs={7}>
-                  <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" />
+                  <TextField sx={{width: '100%' }} id="outlined-basic" label="ID" variant="outlined" value={IdAlumno} disabled />
                   </Grid>
               </Grid>
         </Grid>
@@ -117,7 +136,7 @@ function Profile() {
 
 <Grid container spacing={2} sx={{ padding: '25px'}} >
                 <Grid item xs={4} sx={{ margin: 'auto'}}  >
-                    <DateCalendarServerRequest />  
+                    <DateCalendarServerRequest id={params.id}/>  
                 </Grid>
                 <Grid item xs={8} sx={{ margin: 'auto'}} >
                     <Box sx={{ backgroundColor: theme.palette.primary.light, borderRadius: 1}} alignItems="center">

@@ -7,33 +7,34 @@ import { PickersDay } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useState,useEffect,useRef } from 'react';
+import { GetAttendace } from '../api/asistencia.api';
 
-function getRandomNumber(min, max) {
-  return Math.round(Math.random() * (max - min) + min);
-}
+// function getRandomNumber(min, max) {
+//   return Math.round(Math.random() * (max - min) + min);
+// }
 
 /**
  * Mimic fetch with abort controller https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort
  * ⚠️ No IE11 support
  */
 
-function fakeFetch(date, { signal }) {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      const daysInMonth = date.daysInMonth();
-      const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
+// function fakeFetch(date, { signal }) {
+//   return new Promise((resolve, reject) => {
+//     const timeout = setTimeout(() => {
+//       const daysInMonth = date.daysInMonth();
+//       const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
 
-      resolve({ daysToHighlight });
-    }, 100);
+//       resolve({ daysToHighlight });
+//     }, 100);
 
-    signal.onabort = () => {
-      clearTimeout(timeout);
-      reject(new DOMException('aborted', 'AbortError'));
-    };
-  });
-}
+//     signal.onabort = () => {
+//       clearTimeout(timeout);
+//       reject(new DOMException('aborted', 'AbortError'));
+//     };
+//   });
+// }
 
-const initialValue = dayjs('2022-04-17');
+const initialValue = dayjs();
 
 function ServerDay(props) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
@@ -46,7 +47,7 @@ function ServerDay(props) {
     
       key={props.day.toString()}
       overlap="circular"
-      badgeContent={isSelected ? '🌚' : undefined}
+      badgeContent={isSelected ? '🟢' : undefined}
     >
       <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   sx={{backgroundColor: '#424542',color: '#fff'}} />
 
@@ -54,47 +55,69 @@ function ServerDay(props) {
   );
 }
 
-export default function DateCalendarServerRequest() {
+export default function DateCalendarServerRequest(id) {
   const requestAbortController = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [highlightedDays, setHighlightedDays] = useState([1, 2, 15]);
+  const [highlightedDays, setHighlightedDays] = useState([]);
 
-  const fetchHighlightedDays = (date) => {
-    const controller = new AbortController();
-    fakeFetch(date, {
-      signal: controller.signal,
-    })
-      .then(({ daysToHighlight }) => {
-        setHighlightedDays(daysToHighlight);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        // ignore the error if it's caused by `controller.abort`
-        if (error.name !== 'AbortError') {
-          throw error;
-        }
-      });
+  // const fetchHighlightedDays = (date) => {
+  //   const controller = new AbortController();
+  //   fakeFetch(date, {
+  //     signal: controller.signal,
+  //   })
+  //     .then(({ daysToHighlight }) => {
+  //       setHighlightedDays(daysToHighlight);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       // ignore the error if it's caused by `controller.abort`
+  //       if (error.name !== 'AbortError') {
+  //         throw error;
+  //       }
+  //     });
 
-    requestAbortController.current = controller;
-  };
+  //   requestAbortController.current = controller;
+  // };
 
-  useEffect(() => {
-    fetchHighlightedDays(initialValue);
-    // abort request on unmount
-    return () => requestAbortController.current?.abort();
-  }, []);
+  // useEffect(() => {
+  //   fetchHighlightedDays(initialValue);
+  //   // abort request on unmount
+  //   return () => requestAbortController.current?.abort();
+  // }, []);
 
-  const handleMonthChange = (date) => {
-    if (requestAbortController.current) {
-      // make sure that you are aborting useless requests
-      // because it is possible to switch between months pretty quickly
-      requestAbortController.current.abort();
+  // const handleMonthChange = (date) => {
+  //   if (requestAbortController.current) {
+  //     // make sure that you are aborting useless requests
+  //     // because it is possible to switch between months pretty quickly
+  //     requestAbortController.current.abort();
+  //   }
+
+  //   setIsLoading(true);
+  //   setHighlightedDays([]);
+  //   fetchHighlightedDays(date);
+  // };
+
+  async function getData() {
+    const respuesta = await GetAttendace(id.id)
+    if (respuesta[0]==400) {
+         
+    }else if (respuesta[0]==200) {
+      console.log(respuesta[1].attendance)
+      const days = []
+      for (let index = 0; index < respuesta[1].attendance.length; index++) {
+        const day = new Date(respuesta[1].attendance[index].fecha)
+        console.log(respuesta[1].attendance[index].fecha)
+        console.log(day)
+        days.push(day.getDate())
+      }
+      
+      setHighlightedDays(days)
     }
+  }
 
-    setIsLoading(true);
-    setHighlightedDays([]);
-    fetchHighlightedDays(date);
-  };
+  useEffect(()=>{
+    getData()
+  },[])
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} >
@@ -102,7 +125,7 @@ export default function DateCalendarServerRequest() {
       sx={{backgroundColor: theme.palette.primary.dark,borderRadius: 1}}
         defaultValue={initialValue}
         loading={isLoading}
-        onMonthChange={handleMonthChange}
+        // onMonthChange={handleMonthChange}
         renderLoading={() => <DayCalendarSkeleton />}
         slots={{
           day: ServerDay,
