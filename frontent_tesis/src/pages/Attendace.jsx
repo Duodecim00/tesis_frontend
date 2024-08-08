@@ -43,15 +43,15 @@ Attendace Traker
 
   {rol==0&&
   <>
-    <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id } });}}>
+    <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id,rol:rol } });}}>
         New Student
     </Button>
 
-    <Button variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id } });}}>
+    <Button variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id,rol:rol } });}}>
       
         New Grade
     </Button>
-    <Button variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: id } });}}>
+    <Button variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: id,rol:rol } });}}>
         New Teacher
     </Button>
     </>
@@ -72,42 +72,6 @@ Attendace Traker
             <Grid >
               <div style={{marginBottom: 30}}>
                     <Stack direction="row" spacing={2}>   
-                    {/* <FormControl sx={{width: '20%'}}>
-                       <InputLabel id="demo-simple-select-label">Grado</InputLabel>
-                           <Select
-                             labelId="demo-simple-select-label"
-                             id="demo-simple-select"
-                             
-                             label="Grado"
-                            
-                           >
-                                <MenuItem value={10}>1.º</MenuItem>
-                                <MenuItem value={20}>2.º</MenuItem>
-                                <MenuItem value={30}>3.º</MenuItem>
-                                <MenuItem value={40}>4.º</MenuItem>
-                                <MenuItem value={50}>5.º</MenuItem>
-                                <MenuItem value={60}>6.º</MenuItem>
-                                
-                       </Select>
-                   </FormControl>
-                   <FormControl sx={{width: '20%'}}>
-                       <InputLabel id="demo-simple-select-label">Grado</InputLabel>
-                           <Select
-                             labelId="demo-simple-select-label"
-                             id="demo-simple-select"
-                             
-                             label="Grado"
-                             
-                           >
-                                <MenuItem value={10}>1.º</MenuItem>
-                                <MenuItem value={20}>2.º</MenuItem>
-                                <MenuItem value={30}>3.º</MenuItem>
-                                <MenuItem value={40}>4.º</MenuItem>
-                                <MenuItem value={50}>5.º</MenuItem>
-                                <MenuItem value={60}>6.º</MenuItem>
-                                
-                       </Select>
-                   </FormControl> */}
                     </Stack>
               </div>
             </Grid>

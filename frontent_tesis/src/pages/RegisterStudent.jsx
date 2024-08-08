@@ -70,6 +70,7 @@ function RegisterStudent() {
       setenabledgrade(false)
       if (cantidadSeccion == 0) {
         const valor = await getsections(id)
+        console.log(valor)
         setcantidadSeccion(valor)
       }
     }
@@ -83,9 +84,14 @@ function RegisterStudent() {
         }, 5000);
         seterrorText(respuesta[1].msg)
       }else if (respuesta[0]==201) {
-        const url = "http://192.168.1.107/off";
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          }}
+        const url = `http://192.168.1.106/?param1=${respuesta[1].newStudent._id}`;
   try {
-    const response = await fetch(url);
+    const response = await fetch(url,requestOptions);
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
@@ -95,14 +101,14 @@ function RegisterStudent() {
   } catch (error) {
     console.error(error.message);
   }
-        navigate("/fingerprint", { state: { id: id } });
+        navigate("/fingerprint", { state: { id: id,rol:rol } });
       }
     }
 
     async function start() {
       if (grades != []) {
         const valor = await GetGrades();
-        setgrades(valor)
+        setgrades(valor[1])
       }
     }
 
@@ -115,7 +121,7 @@ function RegisterStudent() {
 
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id } });}}>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>
         <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
