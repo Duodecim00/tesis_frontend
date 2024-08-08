@@ -38,7 +38,7 @@ function Fingerprint() {
 
 
   <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
-      <Button color='success' variant="contained" onClick={()=>{navigate("/Attendace", { state: { id: id } });}}>Complete registration</Button>
+      <Button color='success' variant="contained" onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>Complete registration</Button>
   </div>
 </Grid>
 
