@@ -27,7 +27,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function NewGrade() {
 
-  const [Name,setName] = useState("");
+  const [Name,setName] = useState();
 
   const [Teacher,setTeacher] = useState("");
   const [Seccion,setSeccion] = useState("");
@@ -105,7 +105,7 @@ function NewGrade() {
         }, 5000);
         seterrorText(respuesta[1].msg)
       }else if (respuesta[0]==201) {
-        setName()
+        setName("")
         setTeacher()
         setSeccion()
         setWeeks()
