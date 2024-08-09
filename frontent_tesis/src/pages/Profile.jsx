@@ -22,7 +22,7 @@ import { getStudentByID } from '../api/alumno.api';
 function Profile() {
 
     const {state} = useLocation();
-    const { id } = state; // Read values passed on state
+    const { id,rol } = state; // Read values passed on state
     const navigate = useNavigate();
     const params = useParams()
 
@@ -65,7 +65,7 @@ function Profile() {
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
       <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-        <ArrowBackIcon sx={{color: theme.palette.primary.dark}} onClick={()=>{navigate("/Attendace", { state: { id: id } });}} />
+        <ArrowBackIcon sx={{color: theme.palette.primary.dark}} onClick={()=>{navigate("/Attendace", { state: { id: id ,rol:rol} });}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
         Profile

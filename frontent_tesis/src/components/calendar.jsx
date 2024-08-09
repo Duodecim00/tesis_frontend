@@ -19,6 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { getgradebystudentID, getstudentgrade } from '../api/curso.api';
 
 
 
@@ -30,34 +31,48 @@ export default function DateCalendarServerRequest(id) {
   const initialValue = dayjs();
   const today = new Date()
   const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const [days,setdays] = useState([])
   const [TotalAttendance,setTotalAttendance] = useState([])
   const [change,setchange] = useState(0)
   const [ActualMonth,setActualMonth] = useState()
   const [Validation, setValidation] = useState('');
   const [error,seterror] = useState(false)
   const [errorText,seterrorText] = useState('ErrorMsg')
-
+  const [fechainicio,setfechainicio] =useState()
+  const [fechafinal,setfechafinal] =useState()
   const [Success,setSuccess] = useState(false)
 
   
   function ServerDay(props) {
-    
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-  
+    const StartDate = new Date(fechainicio)
+    const FinalDate = new Date(fechafinal)
+    let classday = false
+    for (let index = 0; index < days.length; index++) {
+      if (
+          props.day.date()>StartDate.getDate()-1 && 
+          props.day.date()<FinalDate.getDate()+1 && 
+          props.day.$d.getMonth()==StartDate.getMonth() && 
+          days[index].dia==weekday[props.day.$d.getDay()] 
+        ) {
+         classday = true
+      }
+    }
     const isSelected =
       !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
       const daymissed = 
       !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) > today.getDate();
     return (
       <Badge 
-      
         key={props.day.toString()}
         overlap="circular"
         //badgeContent={isSelected ? '🟢' : undefined}
       >
-        <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   sx={{backgroundColor: isSelected ? colors.green[500] : daymissed ? colors.red[500] : '#424542',
+        <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   
+        sx={{
+        backgroundColor: isSelected ? colors.green[500] : 
+        classday ? colors.red[500] : '#424542',
           color: '#fff'}} />
-  
       </Badge>
     );
   }
@@ -71,6 +86,10 @@ export default function DateCalendarServerRequest(id) {
 
   async function getData() {
     const respuesta = await GetAttendace(id.id)
+    const respuesta2 = await getgradebystudentID(id.id)
+    setfechainicio(respuesta2.grade[0].fechaInicio)
+    setfechafinal(respuesta2.grade[0].fechaFin)
+    setdays(respuesta2.classes)
     if (respuesta[0]==400) {
          
     }else if (respuesta[0]==200) {

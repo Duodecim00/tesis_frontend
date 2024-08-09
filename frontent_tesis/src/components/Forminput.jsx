@@ -333,7 +333,7 @@ function Forminput(id) {
                       );
                     })}
                     <TableCell key={'Options'} align={"center"}>
-                      <Button onClick={()=>{navigate(`/profile/${row.ID}`, { state: { id: id.id } });}}> <EditCalendarIcon></EditCalendarIcon> </Button>
+                      <Button onClick={()=>{navigate(`/profile/${row.ID}`, { state: { id: id.id,rol:id.rol } });}}> <EditCalendarIcon></EditCalendarIcon> </Button>
                     </TableCell>
                   </TableRow>
                 );

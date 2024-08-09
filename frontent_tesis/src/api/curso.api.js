@@ -65,6 +65,26 @@ export async function getsections(id){
       }
   }
 
+  export async function getgradebystudentID(id) {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }}
+      try {
+        const response = await fetch(`http://localhost:3000/getgradebystudentID/${id}`,requestOptions);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+    
+        const json = await response.json();
+        return json
+      } catch (error) {
+        console.error(error.message);
+      }
+  }
+
   export async function CreateNewGrade(name,idteacher,seccion,weeks,startdate,timestart,timeend,days){
     const requestOptions = {
       method: 'POST',
