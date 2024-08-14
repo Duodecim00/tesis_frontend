@@ -1,6 +1,6 @@
 
 
-export async function NewAttendanceEdit(id,fecha,time) {
+export async function NewAttendanceEdit(id,fecha,time,note) {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -10,7 +10,8 @@ export async function NewAttendanceEdit(id,fecha,time) {
       body: JSON.stringify({
         "id":id,
         "fecha":fecha,
-        "time":time
+        "time":time,
+        "note":note
       })}
       try {
         const response = await fetch('http://localhost:3000/NewAttendanceEdit',requestOptions);
@@ -46,4 +47,32 @@ export async function NewAttendanceEdit(id,fecha,time) {
           } catch (error) {
             console.error(error.message);
           } 
+        }
+
+
+        export async function DeleteAttendance(idAlumno,idCurso,fecha) {
+          const requestOptions = {
+            method: 'DELETE',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              "id_alumno":idAlumno,
+              "id_curso":idCurso,
+              "fecha":fecha
+            })}
+
+            try {
+              const response = await fetch(`http://localhost:3000/DeleteAttendance`,requestOptions);
+              if (!response.ok) {
+                const json = await response.json();
+                return [response.status,json]
+              }
+              const json = await response.json();
+              return [response.status,json]
+            } catch (error) {
+              console.error(error.message);
+            } 
+          
         }
