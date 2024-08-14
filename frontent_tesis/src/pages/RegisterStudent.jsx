@@ -89,7 +89,7 @@ function RegisterStudent() {
           headers: {
             Accept: 'application/json',
           }}
-        const url = `http://192.168.1.106/?param1=${respuesta[1].newStudent._id}`;
+        const url = `http://192.168.1.107/?param1=${respuesta[1].newStudent._id}`;
   try {
     const response = await fetch(url,requestOptions);
     if (!response.ok) {

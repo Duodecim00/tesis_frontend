@@ -27,12 +27,17 @@ export default function DateCalendarServerRequest(id) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [highlightedDays, setHighlightedDays] = useState([]);
+  const [highlightedDaysTime, setHighlightedDaysTime] = useState([]);
+  const [TotalAttendance,setTotalAttendance] = useState([])
+  const [TotalAttendanceTime,setTotalAttendanceTime] = useState([])
+  const [before,setbefore] = useState()
+  const [after,setafter] = useState()
+  const [SameMonth,setSameMonth] = useState(true)
   const [daypicked,setdaypicked] = useState()
   const initialValue = dayjs();
   const today = new Date()
   const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const [days,setdays] = useState([])
-  const [TotalAttendance,setTotalAttendance] = useState([])
   const [change,setchange] = useState(0)
   const [ActualMonth,setActualMonth] = useState()
   const [Validation, setValidation] = useState('');
@@ -45,32 +50,99 @@ export default function DateCalendarServerRequest(id) {
   
   function ServerDay(props) {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+    const diasConTime = highlightedDaysTime
     const StartDate = new Date(fechainicio)
     const FinalDate = new Date(fechafinal)
+
+    if (StartDate.getMonth() != FinalDate.getMonth()) {
+      setSameMonth(false);
+    }
     let classday = false
+    let daymissed = false
+    let isSelected = false
     for (let index = 0; index < days.length; index++) {
-      if (
+
+
+      if (SameMonth) {
+        if (
           props.day.date()>StartDate.getDate()-1 && 
           props.day.date()<FinalDate.getDate()+1 && 
           props.day.$d.getMonth()==StartDate.getMonth() && 
+          props.day.$d.getFullYear()==StartDate.getFullYear() && 
           days[index].dia==weekday[props.day.$d.getDay()] 
         ) {
          classday = true
       }
+      }else{
+if (ActualMonth) {
+
+    if (props.day.$d.getMonth()>StartDate.getMonth() && props.day.$d.getMonth()<FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+      if (
+        days[index].dia==weekday[props.day.$d.getDay()] 
+      ) {
+       classday = true
     }
-    const isSelected =
-      !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
-      const daymissed = 
-      !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) > today.getDate();
+    } else {
+      if (props.day.$d.getMonth()==StartDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+        if (
+          props.day.date()>StartDate.getDate()-1 && 
+          days[index].dia==weekday[props.day.$d.getDay()] 
+        ) {
+         classday = true
+      }
+
+      }else{
+        if (props.day.$d.getMonth()==FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+          if (
+            props.day.date()<FinalDate.getDate()+1 && 
+            days[index].dia==weekday[props.day.$d.getDay()] 
+          ) {
+           classday = true
+        }
+        } else {
+          
+        }
+      }
+    }
+        }
+        else{
+          if (props.day.$d.getMonth()==StartDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+            if (
+              props.day.date()>StartDate.getDate()-1 && 
+              days[index].dia==weekday[props.day.$d.getDay()] 
+            ) {
+             classday = true
+          }
+    
+          }
+      }
+      }
+      
+    }
+
+
+    for (let index = 0; index < diasConTime.length; index++) {
+      if (diasConTime[index][0].getDate() == props.day.date()) {
+        isSelected=true
+      }
+      if (diasConTime[index][0].getDate() == props.day.date()&&diasConTime[index][1] > days[0].horaStart) {
+        isSelected=false
+        daymissed=true
+      } 
+    }
+
+
     return (
       <Badge 
         key={props.day.toString()}
         overlap="circular"
-        //badgeContent={isSelected ? '🟢' : undefined}
+        //badgeContent={isSelected ? '🎈' : undefined}
       >
+        {}
         <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   
         sx={{
         backgroundColor: isSelected ? colors.green[500] : 
+        daymissed ? colors.yellow[700] :
         classday ? colors.red[500] : '#424542',
           color: '#fff'}} />
       </Badge>
@@ -85,34 +157,47 @@ export default function DateCalendarServerRequest(id) {
   }
 
   async function getData() {
+    setbefore(today.getMonth())
     const respuesta = await GetAttendace(id.id)
+
     const respuesta2 = await getgradebystudentID(id.id)
+
     setfechainicio(respuesta2.grade[0].fechaInicio)
     setfechafinal(respuesta2.grade[0].fechaFin)
     setdays(respuesta2.classes)
+
     if (respuesta[0]==400) {
          
     }else if (respuesta[0]==200) {
       const days = []
+      const times = []
       const totaldays = []
+      const totaltimes = []
       for (let index = 0; index < respuesta[1].attendance.length; index++) {
         const day = new Date(respuesta[1].attendance[index].fecha)
+        const time = respuesta[1].attendance[index].hora
 
         if (ActualMonth) {
           if (day.getMonth() === ActualMonth) {
             days.push(day.getDate())
+            times.push([day,time])
           }
         }else{
           if (day.getMonth() === today.getMonth()) {
             days.push(day.getDate())
+            times.push([day,time])
           }
         }
         
         
         totaldays.push(day)
+        totaltimes.push([day,time])
       }
       setTotalAttendance(totaldays)
       setHighlightedDays(days)
+      setHighlightedDaysTime(times)
+      setTotalAttendanceTime(totaltimes)
+      
     }
   }
 
@@ -122,7 +207,8 @@ export default function DateCalendarServerRequest(id) {
 
 
   async function CreateAttendance() {
-    const respuesta = await NewAttendanceEdit(id.id,`${daypicked.$M + 1}/${daypicked.$D}/${daypicked.$y}`)
+    if (Validation=="on time" || Validation=="late") {
+      const respuesta = await NewAttendanceEdit(id.id,`${daypicked.$M + 1}/${daypicked.$D}/${daypicked.$y}`,Validation)
     if (respuesta[0]==400) {
       seterror(true)
       setTimeout(() => {
@@ -142,13 +228,21 @@ export default function DateCalendarServerRequest(id) {
         seterrorText(respuesta[1].msg)
       
     }
+    }else{
+
+    }
+    
 
 
   }
 
   const handleMonthChange = (props) => {
     setActualMonth(props.$M)
+    setafter(props.$M)
+    setbefore(after)
+    
     const days = []
+    const daysTime = []
       for (let index = 0; index < TotalAttendance.length; index++) {
         
         if (TotalAttendance[index].getMonth() === props.$M) {
@@ -156,11 +250,19 @@ export default function DateCalendarServerRequest(id) {
         }
       
       }
+
+      for (let index = 0; index < TotalAttendanceTime.length; index++) {
+        if (TotalAttendanceTime[index][0].getMonth() === props.$M) {
+          daysTime.push(TotalAttendanceTime[index])
+        }
+      
+      }
+      
       setHighlightedDays(days)
+      setHighlightedDaysTime(daysTime)
     }
 
-    const handleChange = (event) => {
-      setValidation(event.target.value);}
+
 
   return (
     <>
@@ -212,9 +314,9 @@ export default function DateCalendarServerRequest(id) {
                                         label="Validation"
                                        onChange={(e)=>{setValidation(e.target.value)}}
                                       >
-                                        <MenuItem value={10}>on time</MenuItem>
-                                        <MenuItem value={20}>late</MenuItem>
-                                        <MenuItem value={30}>non-attendant</MenuItem>
+                                        <MenuItem value={"on time"}>on time</MenuItem>
+                                        <MenuItem value={"late"}>late</MenuItem>
+                                        <MenuItem value={"non-attendant"}>non-attendant</MenuItem>
                                       </Select>
                                 </FormControl>
                           </Grid>

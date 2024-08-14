@@ -1,6 +1,6 @@
 
 
-export async function NewAttendanceEdit(id,fecha) {
+export async function NewAttendanceEdit(id,fecha,time) {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -9,7 +9,8 @@ export async function NewAttendanceEdit(id,fecha) {
       },
       body: JSON.stringify({
         "id":id,
-        "fecha":fecha
+        "fecha":fecha,
+        "time":time
       })}
       try {
         const response = await fetch('http://localhost:3000/NewAttendanceEdit',requestOptions);
