@@ -7,7 +7,7 @@ import { PickersDay } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { useState,useEffect,useRef } from 'react';
-import { GetAttendace, NewAttendanceEdit } from '../api/asistencia.api';
+import { DeleteAttendance, GetAttendace, NewAttendanceEdit } from '../api/asistencia.api';
 import { Alert, Button, colors } from '@mui/material';
 
 import Box from '@mui/material/Box';
@@ -46,20 +46,28 @@ export default function DateCalendarServerRequest(id) {
   const [fechainicio,setfechainicio] =useState()
   const [fechafinal,setfechafinal] =useState()
   const [Success,setSuccess] = useState(false)
-
-  
+  const [note,setnote] = useState("")
+  const [idGrade,setidGrade] = useState()
+  const [daysnote,setdaysnote] = useState([])
+  const [totaldaysnote,settotaldaysnote] = useState([])
   function ServerDay(props) {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
     const diasConTime = highlightedDaysTime
+    const diasconnote = daysnote
     const StartDate = new Date(fechainicio)
     const FinalDate = new Date(fechafinal)
 
     if (StartDate.getMonth() != FinalDate.getMonth()) {
       setSameMonth(false);
+    }else{
+      setSameMonth(true);
     }
+
+
     let classday = false
     let daymissed = false
     let isSelected = false
+
     for (let index = 0; index < days.length; index++) {
 
 
@@ -120,6 +128,9 @@ if (ActualMonth) {
       
     }
 
+    const note =
+    !props.outsideCurrentMonth && diasconnote.indexOf(props.day.date()) >= 0;
+
 
     for (let index = 0; index < diasConTime.length; index++) {
       if (diasConTime[index][0].getDate() == props.day.date()) {
@@ -136,7 +147,8 @@ if (ActualMonth) {
       <Badge 
         key={props.day.toString()}
         overlap="circular"
-        //badgeContent={isSelected ? '🎈' : undefined}
+        
+        badgeContent={note ? '📌' : undefined}
       >
         {}
         <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   
@@ -159,9 +171,8 @@ if (ActualMonth) {
   async function getData() {
     setbefore(today.getMonth())
     const respuesta = await GetAttendace(id.id)
-
     const respuesta2 = await getgradebystudentID(id.id)
-
+    setidGrade(respuesta2.grade[0]._id)
     setfechainicio(respuesta2.grade[0].fechaInicio)
     setfechafinal(respuesta2.grade[0].fechaFin)
     setdays(respuesta2.classes)
@@ -173,30 +184,48 @@ if (ActualMonth) {
       const times = []
       const totaldays = []
       const totaltimes = []
+      const notes=[]
+      const totalnotes=[]
       for (let index = 0; index < respuesta[1].attendance.length; index++) {
         const day = new Date(respuesta[1].attendance[index].fecha)
         const time = respuesta[1].attendance[index].hora
+        const note = respuesta[1].attendance[index].nota
 
         if (ActualMonth) {
           if (day.getMonth() === ActualMonth) {
             days.push(day.getDate())
-            times.push([day,time])
+            times.push([day,time,note])
           }
+
+          if (respuesta[1].attendance[index].nota) {
+            notes.push(day.getDate())
+          }
+
         }else{
           if (day.getMonth() === today.getMonth()) {
             days.push(day.getDate())
-            times.push([day,time])
+            times.push([day,time,note])
           }
+
+          if (respuesta[1].attendance[index].nota) {
+            notes.push(day.getDate())
+          }
+
+        }
+
+        if (respuesta[1].attendance[index].nota) {
+          totalnotes.push(day.getDate())
         }
         
-        
         totaldays.push(day)
-        totaltimes.push([day,time])
+        totaltimes.push([day,time,note])
       }
       setTotalAttendance(totaldays)
       setHighlightedDays(days)
       setHighlightedDaysTime(times)
       setTotalAttendanceTime(totaltimes)
+      setdaysnote(notes)
+      settotaldaysnote(totaltimes)
       
     }
   }
@@ -208,7 +237,7 @@ if (ActualMonth) {
 
   async function CreateAttendance() {
     if (Validation=="on time" || Validation=="late") {
-      const respuesta = await NewAttendanceEdit(id.id,`${daypicked.$M + 1}/${daypicked.$D}/${daypicked.$y}`,Validation)
+      const respuesta = await NewAttendanceEdit(id.id,`${daypicked.$M + 1}/${daypicked.$D}/${daypicked.$y}`,Validation,note)
     if (respuesta[0]==400) {
       seterror(true)
       setTimeout(() => {
@@ -229,7 +258,34 @@ if (ActualMonth) {
       
     }
     }else{
-
+      if (Validation=="non-attendant") {
+        const respuesta = await DeleteAttendance(id.id,idGrade,`${daypicked.$M + 1}/${daypicked.$D}/${daypicked.$y}`)
+        if (respuesta[0]==400) {
+          seterror(true)
+          setTimeout(() => {
+            seterror(false)
+          }, 5000);
+          seterrorText(respuesta[1].msg)
+        }else if (respuesta[0]==200) {
+          setSuccess(true)
+          if (change==0) {
+            setchange(1)
+          }else{
+            setchange(0)
+          }
+            setTimeout(() => {
+              setSuccess(false)   
+            }, 5000);
+            seterrorText(respuesta[1].msg)
+        }
+      }else{
+        seterror(true)
+        setTimeout(() => {
+          seterror(false)
+        }, 5000);
+        seterrorText("Select an attendance")
+      }
+     
     }
     
 
@@ -238,11 +294,10 @@ if (ActualMonth) {
 
   const handleMonthChange = (props) => {
     setActualMonth(props.$M)
-    setafter(props.$M)
-    setbefore(after)
     
     const days = []
     const daysTime = []
+    const dayswithnote = []
       for (let index = 0; index < TotalAttendance.length; index++) {
         
         if (TotalAttendance[index].getMonth() === props.$M) {
@@ -257,9 +312,35 @@ if (ActualMonth) {
         }
       
       }
+
+      for (let index = 0; index < totaldaysnote.length; index++) {
+        if (totaldaysnote[index][0].getMonth() === props.$M) {
+          if (totaldaysnote[index][2] != undefined) {
+            dayswithnote.push(totaldaysnote[index][0].getDate())
+          }
+          
+        }
+      
+      }
       
       setHighlightedDays(days)
       setHighlightedDaysTime(daysTime)
+      setdaysnote(dayswithnote)
+    }
+
+
+    function newpick(e) {
+      setdaypicked(e)
+      for (let index = 0; index < totaldaysnote.length; index++) {
+        if (`${e.$M + 1}/${e.$D}/${e.$y}` === totaldaysnote[index][0].toLocaleDateString()) {
+          if (totaldaysnote[index][2]) {
+            setnote(totaldaysnote[index][2])
+          }
+        
+          
+        }
+      
+      }
     }
 
 
@@ -271,7 +352,7 @@ if (ActualMonth) {
     <LocalizationProvider dateAdapter={AdapterDayjs} >
       <DateCalendar
       disableHighlightToday
-      value={daypicked} onChange={(e)=>{setdaypicked(e)}}
+      value={daypicked} onChange={newpick}
       dayOfWeekFormatter={CalendarWeeks}
       onMonthChange={handleMonthChange}
       sx={{backgroundColor: theme.palette.primary.dark,borderRadius: 1}}
@@ -306,7 +387,7 @@ if (ActualMonth) {
                           <Grid container spacing={2} sx={{ padding: '25px'}}>
                           <Grid item xs={3}>
                                 <FormControl fullWidth  >
-                                    <InputLabel id="demo-simple-select-label">count day</InputLabel>
+                                    <InputLabel id="demo-simple-select-label">Attendance</InputLabel>
                                       <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
@@ -314,22 +395,22 @@ if (ActualMonth) {
                                         label="Validation"
                                        onChange={(e)=>{setValidation(e.target.value)}}
                                       >
-                                        <MenuItem value={"on time"}>on time</MenuItem>
-                                        <MenuItem value={"late"}>late</MenuItem>
-                                        <MenuItem value={"non-attendant"}>non-attendant</MenuItem>
+                                        <MenuItem value={"on time"}>On time</MenuItem>
+                                        <MenuItem value={"late"}>Late</MenuItem>
+                                        <MenuItem value={"non-attendant"}>Non-attendant</MenuItem>
                                       </Select>
                                 </FormControl>
                           </Grid>
                           <Grid item xs={9}>
-                          <TextField sx={{width: '100%' }} id="outlined-basic" label="reason" variant="outlined" />
                           </Grid>
                           <Grid item xs={12}>
                               <TextField sx={{width: '100%' }}
                               id="outlined-multiline-static"
-                              label="description"
+                              label="Description"
                               multiline
+                              value={note}
+                              onChange={(e)=>{setnote(e.target.value)}}
                               rows={5}
-                              defaultValue="Default Value"
                             />
                           </Grid>
                                 <div style={{margin: '5px', marginLeft: 'auto',marginRight: 'auto'}}>
