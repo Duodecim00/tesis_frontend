@@ -50,7 +50,9 @@ export default function DateCalendarServerRequest(id) {
   const [idGrade,setidGrade] = useState()
   const [daysnote,setdaysnote] = useState([])
   const [totaldaysnote,settotaldaysnote] = useState([])
+  
   function ServerDay(props) {
+
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
     const diasConTime = highlightedDaysTime
     const diasconnote = daysnote
@@ -68,65 +70,69 @@ export default function DateCalendarServerRequest(id) {
     let daymissed = false
     let isSelected = false
 
-    for (let index = 0; index < days.length; index++) {
 
+      for (let index = 0; index < days.length; index++) {
 
-      if (SameMonth) {
-        if (
-          props.day.date()>StartDate.getDate()-1 && 
-          props.day.date()<FinalDate.getDate()+1 && 
-          props.day.$d.getMonth()==StartDate.getMonth() && 
-          props.day.$d.getFullYear()==StartDate.getFullYear() && 
-          days[index].dia==weekday[props.day.$d.getDay()] 
-        ) {
-         classday = true
-      }
-      }else{
-if (ActualMonth) {
-
-    if (props.day.$d.getMonth()>StartDate.getMonth() && props.day.$d.getMonth()<FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
-      if (
-        days[index].dia==weekday[props.day.$d.getDay()] 
-      ) {
-       classday = true
-    }
-    } else {
-      if (props.day.$d.getMonth()==StartDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
-        if (
-          props.day.date()>StartDate.getDate()-1 && 
-          days[index].dia==weekday[props.day.$d.getDay()] 
-        ) {
-         classday = true
-      }
-
-      }else{
-        if (props.day.$d.getMonth()==FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+        if (SameMonth) {
           if (
+            props.day.date()>StartDate.getDate()-1 && 
             props.day.date()<FinalDate.getDate()+1 && 
+            props.day.$d.getMonth()==StartDate.getMonth() && 
+            props.day.$d.getFullYear()==StartDate.getFullYear() && 
             days[index].dia==weekday[props.day.$d.getDay()] 
           ) {
            classday = true
         }
-        } else {
-          
-        }
+        }else{
+  if (ActualMonth) {
+  
+      if (props.day.$d.getMonth()>StartDate.getMonth() && props.day.$d.getMonth()<FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+        if (
+          days[index].dia==weekday[props.day.$d.getDay()] 
+        ) {
+         classday = true
       }
-    }
+      } else {
+        if (props.day.$d.getMonth()==StartDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+          if (
+            props.day.date()>StartDate.getDate()-1 && 
+            days[index].dia==weekday[props.day.$d.getDay()] 
+          ) {
+           classday = true
         }
-        else{
-          if (props.day.$d.getMonth()==StartDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+  
+        }else{
+          if (props.day.$d.getMonth()==FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
             if (
-              props.day.date()>StartDate.getDate()-1 && 
+              props.day.date()<FinalDate.getDate()+1 && 
               days[index].dia==weekday[props.day.$d.getDay()] 
             ) {
              classday = true
           }
-    
+          } else {
+            
           }
+        }
       }
-      }
+          }
+          else{
+            if (props.day.$d.getMonth()==StartDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
+              if (
+                props.day.date()>StartDate.getDate()-1 && 
+                days[index].dia==weekday[props.day.$d.getDay()] 
+              ) {
+               classday = true
+            }
       
-    }
+            }
+        }
+        }
+        
+      }
+
+    
+
+    
 
     const note =
     !props.outsideCurrentMonth && diasconnote.indexOf(props.day.date()) >= 0;
@@ -195,21 +201,23 @@ if (ActualMonth) {
           if (day.getMonth() === ActualMonth) {
             days.push(day.getDate())
             times.push([day,time,note])
-          }
 
-          if (respuesta[1].attendance[index].nota) {
-            notes.push(day.getDate())
+            if (respuesta[1].attendance[index].nota) {
+              notes.push(day.getDate())
+            }
           }
 
         }else{
           if (day.getMonth() === today.getMonth()) {
             days.push(day.getDate())
             times.push([day,time,note])
+
+            if (respuesta[1].attendance[index].nota) {
+              notes.push(day.getDate())
+            }
           }
 
-          if (respuesta[1].attendance[index].nota) {
-            notes.push(day.getDate())
-          }
+          
 
         }
 

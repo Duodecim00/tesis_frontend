@@ -34,7 +34,6 @@ function RegisterTeacher() {
   const navigate = useNavigate();
 
   async function continuar(params) {
-    console.log(FirstName,LastName,UserName,Password)
    const respuesta = await newTeacher(FirstName,LastName,UserName,Password)
    if (respuesta[0]==400) {
     seterror(true)
