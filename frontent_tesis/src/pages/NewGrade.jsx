@@ -64,7 +64,6 @@ function NewGrade() {
   const navigate = useNavigate();
 
   const handledays = async (event, newdays) => {
-    console.log(newdays)
     await setdays(newdays);
   };
 
@@ -97,7 +96,6 @@ function NewGrade() {
       TimeStart?.$d.toLocaleTimeString('en-GB'),
       timeEnd?.$d.toLocaleTimeString('en-GB'),
       days)
-      console.log(respuesta)
       if (respuesta[0]==400) {
         seterror(true)
         setTimeout(() => {

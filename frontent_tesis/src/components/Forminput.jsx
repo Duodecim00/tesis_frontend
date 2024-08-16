@@ -9,21 +9,23 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { getallstudents, getStundetsByTeacher } from '../api/alumno.api';
 import { GetGrades, getstudentgrade, getTeacherGrades } from "../api/curso.api";
-import { Box, Button, CircularProgress, colors, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, Checkbox, CircularProgress, colors, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import SearchIcon from '@mui/icons-material/Search';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import { useNavigate } from 'react-router-dom';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CustomizedMenus from './Menu';
 const columns = [
 
-  { 
-    id: 'ID', 
-    label: 'Student ID', 
-    minWidth: 80,
-    format: (value) => value.toFixed(2)
-  },
+  // { 
+  //   id: 'ID', 
+  //   label: 'Student ID', 
+  //   minWidth: 80,
+  //   format: (value) => value.toFixed(2)
+  // },
   {
-    id: 'Cedula',
+    id: 'ID',
     label: 'Cedula',
     minWidth:  80,
     align: 'right',
@@ -109,8 +111,8 @@ function Forminput(id) {
       const result = await getstudentgrade(respuesta[1][index].id_curso)
 
       const student ={
-        ID:respuesta[1][index]._id,
-        Cedula:respuesta[1][index].cedula,
+        _ID:respuesta[1][index]._id,
+        ID:respuesta[1][index].cedula,
         LName:nombre[1],
         FName:nombre[0],
         Gender:respuesta[1][index].genero,
@@ -138,8 +140,8 @@ function Forminput(id) {
       const result = await getstudentgrade(respuesta[1][index].id_curso)
 
       const student ={
-        ID:respuesta[1][index]._id,
-        Cedula:respuesta[1][index].cedula,
+        _ID:respuesta[1][index]._id,
+        ID:respuesta[1][index].cedula,
         LName:nombre[1],
         FName:nombre[0],
         Gender:respuesta[1][index].genero,
@@ -160,14 +162,12 @@ function Forminput(id) {
   async function setteachersGrades() {
     if (id.rol==0) {
       const respuesta = await GetGrades()
-    console.log(respuesta)
     if (respuesta[0]==400) {
     }else if (respuesta[0]==200) {
       setgrades(respuesta[1])
     }
     }else{
       const respuesta = await getTeacherGrades(id.id)
-      console.log(respuesta)
       if (respuesta[0]==400) {
       }else if (respuesta[0]==200) {
         setgrades(respuesta[1])
@@ -251,8 +251,7 @@ function Forminput(id) {
         id="input-with-icon-textfield"
         label="Search"
         value={search}
-        onChange={(e)=>{console.log(search)
-          setSearch(e.target.value)}}
+        onChange={(e)=>{setSearch(e.target.value)}}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -295,6 +294,7 @@ function Forminput(id) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
+            
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
@@ -313,7 +313,6 @@ function Forminput(id) {
             {rowsfiltred&&rowsfiltred
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
-                console.log(row)
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.ID}>
                     {columns.map((column) => {
@@ -333,7 +332,8 @@ function Forminput(id) {
                       );
                     })}
                     <TableCell key={'Options'} align={"center"}>
-                      <Button onClick={()=>{navigate(`/profile/${row.ID}`, { state: { id: id.id,rol:id.rol } });}}> <EditCalendarIcon></EditCalendarIcon> </Button>
+                      <CustomizedMenus idfila={row._ID} id={id.id} rol={id.rol}></CustomizedMenus>
+                      {/* <IconButton onClick={()=>{navigate(`/profile/${row.ID}`, { state: { id: id.id,rol:id.rol } });}}> <MoreVertIcon></MoreVertIcon> </IconButton> */}
                     </TableCell>
                   </TableRow>
                 );

@@ -20,17 +20,13 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import GradeIcon from '@mui/icons-material/Grade';
 import FaceIcon from '@mui/icons-material/Face';
+import EnhancedTable from '../components/TableWithChecks';
 
 function Attendace() {
   const {state} = useLocation();
   const { id,rol } = state; // Read values passed on state
 
   const navigate = useNavigate();
-
-  useEffect(()=>{
-    console.log(rol)
-  },[])
-
   return(
 
 <>
@@ -76,7 +72,8 @@ Attendace Traker
               </div>
             </Grid>
               <Grid container >
-                 <Forminput id={id} rol={rol}/>
+                <EnhancedTable id={id} rol={rol}></EnhancedTable>
+                 {/* <Forminput id={id} rol={rol}/> */}
               </Grid>
         </Grid>
 </Grid>

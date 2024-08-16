@@ -70,7 +70,6 @@ function RegisterStudent() {
       setenabledgrade(false)
       if (cantidadSeccion == 0) {
         const valor = await getsections(id)
-        console.log(valor)
         setcantidadSeccion(valor)
       }
     }
@@ -97,7 +96,6 @@ function RegisterStudent() {
     }
 
     const json = await response.json();
-    console.log(json);
   } catch (error) {
     console.error(error.message);
   }

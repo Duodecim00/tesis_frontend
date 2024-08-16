@@ -90,3 +90,28 @@ export async function NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
               console.error(error.message);
             } 
           }
+
+
+          export async function DeleteStudent(idAlumno) {
+            console.log(idAlumno)
+            const requestOptions = {
+              method: 'DELETE',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              }}
+              console.log("hola")
+              try {
+                const response = await fetch(`http://localhost:3000/DeleteStudent/${idAlumno}`,requestOptions);
+                if (!response.ok) {
+                  const json = await response.json();
+                  console.log(json)
+                  return [response.status,json]
+                }
+                const json = await response.json();
+                return [response.status,json]
+              } catch (error) {
+                console.error(error.message);
+              } 
+            
+          }
