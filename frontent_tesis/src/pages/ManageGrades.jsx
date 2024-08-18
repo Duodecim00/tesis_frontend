@@ -21,28 +21,26 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import GradeIcon from '@mui/icons-material/Grade';
 import FaceIcon from '@mui/icons-material/Face';
 import EnhancedTable from '../components/TableWithChecks';
-import EditNoteIcon from '@mui/icons-material/EditNote';
+import CollapsibleTable from '../components/GradesTable';
+function ManageGrades(props) {
 
-function Attendace() {
-  const {state} = useLocation();
-  const { id,rol } = state; // Read values passed on state
+    const {state} = useLocation();
+    const { id,rol } = state; // Read values passed on state
+  
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
-  return(
-
+    return (
+      
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
 <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
-Attendace Traker
+Manage Grades
 </Typography>
     <Box sx={{ flexGrow: 1 }} />
 <Stack direction="row" spacing={2}>   
 
   {rol==0&&
   <>
-   <Button variant="contained" startIcon={<EditNoteIcon />} onClick={()=>{navigate("/Grades", { state: { id: id,rol:rol } });}}>
-        Manage Grades
-    </Button>
     <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id,rol:rol } });}}>
         New Student
     </Button>
@@ -76,16 +74,14 @@ Attendace Traker
               </div>
             </Grid>
               <Grid container >
-                <EnhancedTable id={id} rol={rol}></EnhancedTable>
-                 {/* <Forminput id={id} rol={rol}/> */}
+                <CollapsibleTable id={id} rol={rol}></CollapsibleTable>
               </Grid>
         </Grid>
 </Grid>
 
 </Box>
 </>
-  );
+    );
 }
 
-export default  Attendace;
-
+export default ManageGrades;
