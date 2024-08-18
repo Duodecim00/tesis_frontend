@@ -68,10 +68,10 @@ function RegisterStudent() {
 
     async function prueba(id) {
       setenabledgrade(false)
-      if (cantidadSeccion == 0) {
+      // if (cantidadSeccion == 0) {
         const valor = await getsections(id)
         setcantidadSeccion(valor)
-      }
+      // }
     }
 
     async function Continue() {
@@ -168,7 +168,6 @@ function RegisterStudent() {
                                 >
                                 <MenuItem value={'Male'}>Male</MenuItem>
                                 <MenuItem value={'Female'}>Female</MenuItem>
-                                {/* <MenuItem value={20}>39 types of gay</MenuItem> */}
                                 
                             </Select>
                         </FormControl>
@@ -194,7 +193,7 @@ function RegisterStudent() {
                              id="demo-simple-select"
                              value={Grado}
                              label="Grado"
-                             onChange={handleGrado}
+                             onChange={(e)=>{setGrado(e.target.value)}}
                            >
                             {grades&&grades.map((grade)=>{
                               return(

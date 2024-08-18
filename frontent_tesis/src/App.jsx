@@ -7,7 +7,8 @@ import Login from './pages/login.jsx';
 import Fingerprint from './pages/Fingerprint.jsx';
 import Profile from './pages/Profile.jsx';
 import './App.css';
-
+import ManageGrades from './pages/ManageGrades.jsx';
+import  EditGrade  from "./pages/EditGrade.jsx";
 function App() {
  
 
@@ -21,6 +22,8 @@ function App() {
         <Route path="/Attendace" element={<Attendace/>} />
         <Route path="/fingerprint" element={<Fingerprint/>} />
         <Route path="/profile/:id" element={<Profile/>} />
+        <Route path='/grades' element={<ManageGrades></ManageGrades>}></Route>
+        <Route path='/editGrade/:id' element={<EditGrade></EditGrade>}></Route>
         <Route path="/" element={<Login/>} />
       </Routes>
     </Router>
