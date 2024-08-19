@@ -18,6 +18,8 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import { useNavigate } from 'react-router-dom';
 import { DeleteStudent } from '../api/alumno.api';
 import useStore from '../store/useStore';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import Pdf from './PDF';
 const StyledMenu = styled((props) => (
   <Menu
     elevation={0}
@@ -130,7 +132,7 @@ export default function CustomizedMenus(params) {
           <FingerprintIcon />
           Add Fingerprint
         </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={()=>{navigate(`/ViewPdf`, { state: { id: params.id,rol:params.rol,idfila:params.idfila } });}} disableRipple>
           <PrintIcon />
           Print Attendance
         </MenuItem>

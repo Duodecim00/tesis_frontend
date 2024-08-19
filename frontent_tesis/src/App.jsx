@@ -9,6 +9,7 @@ import Profile from './pages/Profile.jsx';
 import './App.css';
 import ManageGrades from './pages/ManageGrades.jsx';
 import  EditGrade  from "./pages/EditGrade.jsx";
+import ViewAttendancePdf from './pages/ViewAttendancePdf.jsx';
 function App() {
  
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/profile/:id" element={<Profile/>} />
         <Route path='/grades' element={<ManageGrades></ManageGrades>}></Route>
         <Route path='/editGrade/:id' element={<EditGrade></EditGrade>}></Route>
+        <Route path='/ViewPdf' element={<ViewAttendancePdf></ViewAttendancePdf>}></Route>
         <Route path="/" element={<Login/>} />
       </Routes>
     </Router>
