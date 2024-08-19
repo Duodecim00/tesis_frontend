@@ -22,8 +22,8 @@ import GradeIcon from '@mui/icons-material/Grade';
 //import FaceIcon from '@mui/icons-material/Face';
 import EnhancedTable from '../components/TableWithChecks';
 import Pdf from '../components/PDF';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 function Attendace() {
   const {state} = useLocation();
   const { id,rol } = state; // Read values passed on state
@@ -32,6 +32,8 @@ function Attendace() {
   return(
 
 <>
+
+
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
 <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
 Attendace Traker
@@ -41,33 +43,16 @@ Attendace Traker
 
   {rol==0&&
   <>
-    <Button sx={{background:'#6FB555'}} variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id,rol:rol } });}}>
-        New Student
+  <Button variant="contained" startIcon={<EditNoteIcon />} onClick={()=>{navigate("/Grades", { state: { id: id,rol:rol } });}}>
+        Manage Grades
     </Button>
+    
 
     <Button sx={{background:'#3D3D3D'}} variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id,rol:rol } });}}>
         New Grade
     </Button>
-    <div>
-      <PDFDownloadLink document={<Pdf/>} dileName="tesispdf.pdf">
-        {({loading}) =>
-          loading ? 
-            <button>loading Document ....</button>
-           : 
-            <button>dowload now!</button>
-          
-        }
-
-        </PDFDownloadLink>
-    </div>
-        
-
     </>
 }
-    
-    <Button sx={{background:'#3D3D3D'}} variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
-        Exit 
-    </Button>
     <Button sx={{background:'#3D3D3D'}} variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
         Exit 
     </Button>
@@ -88,12 +73,17 @@ Attendace Traker
             </Grid>
               <Grid container >
                 <EnhancedTable id={id} rol={rol}></EnhancedTable>
-                 {/* <Forminput id={id} rol={rol}/> */}
               </Grid>
         </Grid>
 </Grid>
 
+
+
 </Box>
+
+
+
+
 </>
   );
 }

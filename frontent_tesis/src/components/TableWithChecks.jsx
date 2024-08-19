@@ -28,6 +28,7 @@ import {Button, CircularProgress, colors, FormControl,TextField,InputAdornment,I
 import { useNavigate } from 'react-router-dom';
 import CustomizedMenus from './Menu';
 import useStore from '../store/useStore';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -131,6 +132,7 @@ export default function EnhancedTable(id) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
   const [selected, setSelected] = React.useState([]);
+  const [idselected, setidselected] = React.useState([]);
   const [dense, setDense] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -142,6 +144,8 @@ export default function EnhancedTable(id) {
   const [search, setSearch] = React.useState("")
   const [grades,setgrades] = React.useState([])
   const [grade,setgrade] = React.useState("")
+
+  const navigate = useNavigate();
 
   function EnhancedTableHead(props) {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
@@ -202,8 +206,22 @@ export default function EnhancedTable(id) {
     rowCount: PropTypes.number.isRequired,
   };
   
+
+
+
+
+
+
+
+
+
+
+
+
+
   function EnhancedTableToolbar(props) {
     const { numSelected } = props;
+    
   
     return (
       <Toolbar
@@ -238,7 +256,7 @@ export default function EnhancedTable(id) {
   
         {numSelected > 0 ? (
           <Tooltip title="Print">
-            <IconButton>
+            <IconButton onClick={()=>{navigate("/ViewPdf", { state: { id: id.id,rol:id.rol,idfila:idselected } });}}>
               <PrintIcon />
             </IconButton>
           </Tooltip>
@@ -406,12 +424,14 @@ export default function EnhancedTable(id) {
     if (event.target.checked) {
       const newSelected = rowsfiltred.map((n) => n.ID);
       setSelected(newSelected);
+      const newIDSelected = rowsfiltred.map((n) => n._ID);
+      setidselected(newIDSelected)
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, id) => {
+  const handleClick = (event, id,idstudent) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -428,6 +448,26 @@ export default function EnhancedTable(id) {
       );
     }
     setSelected(newSelected);
+      
+
+
+      const selectediD = idselected.indexOf(idstudent);
+    let NewIdSelected = [];
+
+    if (selectediD === -1) {
+      NewIdSelected = NewIdSelected.concat(idselected, idstudent);
+    } else if (selectediD === 0) {
+      NewIdSelected = NewIdSelected.concat(idselected.slice(1));
+    } else if (selectediD === idselected.length - 1) {
+      NewIdSelected = NewIdSelected.concat(idselected.slice(0, -1));
+    } else if (selectediD > 0) {
+      NewIdSelected = NewIdSelected.concat(
+        idselected.slice(0, selectediD),
+        idselected.slice(selectediD + 1),
+      );
+    }
+    setidselected(NewIdSelected)
+
   };
 
   const handleChangePage = (event, newPage) => {
@@ -459,9 +499,10 @@ export default function EnhancedTable(id) {
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%',display:"flex",flexDirection:"column" }}>
 
-<FormControl sx={{width: '20%',marginBottom:"10px",marginRight:"10px"}}>
+      <Box sx={{ width: '100%',display:"flex",flexDirection:"row" }}>
+      <FormControl sx={{width: '20%',marginBottom:"10px",marginRight:"10px"}}>
 
 <TextField
       id="input-with-icon-textfield"
@@ -501,6 +542,14 @@ export default function EnhancedTable(id) {
                      </Select>
                  </FormControl>
 
+                 <Button sx={{background:'#6FB555',marginLeft:"auto",marginBottom:"15px"}} variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id.id,rol:id.rol } });}}>
+        New Student
+    </Button>
+
+      </Box>
+
+
+
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -536,7 +585,7 @@ export default function EnhancedTable(id) {
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
-                        onClick={(event) => handleClick(event, row.ID)}
+                        onClick={(event) => handleClick(event, row.ID,row._ID)}
                         checked={isItemSelected}
                         inputProps={{
                           'aria-labelledby': labelId,
