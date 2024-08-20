@@ -7,6 +7,7 @@ import theme from '../color/color';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getStudentByID } from '../api/alumno.api';
 import { GetAttendace } from '../api/asistencia.api';
+import { getstudentgrade } from '../api/curso.api';
 
 function ViewAttendancePdf(props) {
   const {state} = useLocation();
@@ -24,8 +25,21 @@ function ViewAttendancePdf(props) {
       for (let index = 0; index < idfila.length; index++) {
 
         const respuestaDataStudent = await getStudentByID(idfila[index])
-            DataStudents.push(respuestaDataStudent[1])
+        const respuestaCurso = await getstudentgrade(respuestaDataStudent[1].id_curso)
+            
 
+
+            const student ={
+              _id:respuestaDataStudent[1]._id,
+              cedula:respuestaDataStudent[1].cedula,
+              nombrecompleto:respuestaDataStudent[1].nombrecompleto,
+              Gender:respuestaDataStudent[1].genero,
+              Age:respuestaDataStudent[1].edad,
+              Grade:respuestaCurso[0].nombreCurso,
+              Section:respuestaCurso[0].seccion,
+              duration:respuestaCurso[0].totalClases
+            }
+            DataStudents.push(student)
         
         const respuesta = await GetAttendace(idfila[index])
         for (let index = 0; index < respuesta[1].attendance.length; index++) {
@@ -63,7 +77,7 @@ function ViewAttendancePdf(props) {
           </Box>
            }
 
-  {asistencias&&dataAlumnos&&<PDFViewer style={{marginLeft:"auto",marginRight:"auto",backgroundColor:"#404040"}} showToolbar={true} width={1460} height={640}>
+  {asistencias&&dataAlumnos&&<PDFViewer fileName="myPdf.pdf" style={{marginLeft:"auto",marginRight:"auto",backgroundColor:"#404040"}} showToolbar={true} width={1460} height={640}>
         <Pdf asistencias={asistencias} dataAlumnos={dataAlumnos}/>
       </PDFViewer>}
       

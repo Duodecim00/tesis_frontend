@@ -71,7 +71,7 @@ const headCells = [
   // },
   {
     id: 'ID',
-    label: 'Cedula',
+    label: 'Document',
     minWidth:  80,
     align: 'right',
     format: (value) => value.toFixed(2),
