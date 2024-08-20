@@ -13,12 +13,15 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { FormControl, InputAdornment, TablePagination, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Button, CircularProgress, FormControl, InputAdornment, TablePagination, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import theme from '../color/color';
 import CustomizedMenus from './Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { getGradesFullData } from '../api/curso.api';
 import CustomizedMenusGrades from './MenuGrades';
+import { useNavigate } from 'react-router-dom';
+import GradeIcon from '@mui/icons-material/Grade';
+import FaceIcon from '@mui/icons-material/Face';
 
 function createData(name, section, teacher, students, duration, startdate,enddate,starttime,endtime,classes,total,classdays) {
   return {
@@ -164,12 +167,17 @@ export default function CollapsibleTable(params) {
     const [rows,setrows] = React.useState([])
     const [rowsfiltred,setrowsfiltred] = React.useState([])
     const [search, setSearch] = React.useState("")
+    const [loading,setloading] = React.useState(true)
+    const navigate = useNavigate();
+
+
     async function getData() {
         const respuesta = await getGradesFullData()
             if (respuesta[0]==400) {
     
             }else if (respuesta[0]==200) {
                 setrows(respuesta[1])
+                
             }
     }
     
@@ -192,6 +200,7 @@ export default function CollapsibleTable(params) {
       if(rows.length != 0) {
         await setrowsfiltred(filterDataBySearch(rows))
         setPage(0);
+        setloading(false)
       }
     }, 500);
     return () => clearTimeout(timeout);
@@ -213,8 +222,12 @@ export default function CollapsibleTable(params) {
 
 
   return (
-    <>
-    <FormControl sx={{width: '20%',marginBottom:"10px",marginRight:"10px"}}>
+    <Box sx={{ width: '100%',display:"flex",flexDirection:"column" }}>
+
+
+<Box sx={{ width: '100%',display:"flex",flexDirection:"row" }}>
+
+<FormControl sx={{width: '20%',marginBottom:"10px",marginRight:"10px"}}>
 
 <TextField
       id="input-with-icon-textfield"
@@ -230,6 +243,29 @@ export default function CollapsibleTable(params) {
       }}
     />
                  </FormControl>
+
+                 <Box sx={{display:"flex",marginLeft:"auto" }}>
+
+                 <Button sx={{background:'#6FB555',marginBottom:"15px",marginRight:"25px"}} variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: params.id,rol:params.rol } });}}>
+        New Teacher
+    </Button>
+
+
+                 <Button sx={{background:'#6FB555',marginBottom:"15px"}} variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: params.id,rol:params.rol } });}}>
+        New Grade
+    </Button>
+
+</Box>
+
+                 
+
+                 
+</Box>
+
+
+    
+
+
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
         <TableHead>
@@ -252,6 +288,11 @@ export default function CollapsibleTable(params) {
         </TableBody>
       </Table>
     </TableContainer>
+    {loading&&
+            <Box sx={{ display: 'flex', width:"100%",marginTop:"10px" }}>
+            <CircularProgress sx={{marginLeft:"auto",marginRight:"auto"}} />
+          </Box>
+           }
     <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -261,7 +302,7 @@ export default function CollapsibleTable(params) {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-    </>
+    </Box>
     
     
   );

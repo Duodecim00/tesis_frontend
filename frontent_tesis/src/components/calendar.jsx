@@ -323,7 +323,7 @@ export default function DateCalendarServerRequest(id) {
 
       for (let index = 0; index < totaldaysnote.length; index++) {
         if (totaldaysnote[index][0].getMonth() === props.$M) {
-          if (totaldaysnote[index][2] != undefined) {
+          if (totaldaysnote[index][2] != "") {
             dayswithnote.push(totaldaysnote[index][0].getDate())
           }
           

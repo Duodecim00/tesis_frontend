@@ -132,7 +132,7 @@ export default function CustomizedMenus(params) {
           <FingerprintIcon />
           Add Fingerprint
         </MenuItem>
-        <MenuItem onClick={()=>{navigate(`/ViewPdf`, { state: { id: params.id,rol:params.rol,idfila:params.idfila } });}} disableRipple>
+        <MenuItem onClick={()=>{navigate(`/ViewPdf`, { state: { id: params.id,rol:params.rol,idfila:[params.idfila] } });}} disableRipple>
           <PrintIcon />
           Print Attendance
         </MenuItem>

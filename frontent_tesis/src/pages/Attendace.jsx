@@ -24,6 +24,7 @@ import EnhancedTable from '../components/TableWithChecks';
 import Pdf from '../components/PDF';
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import PersonIcon from '@mui/icons-material/Person';
 function Attendace() {
   const {state} = useLocation();
   const { id,rol } = state; // Read values passed on state
@@ -43,14 +44,15 @@ Attendace Traker
 
   {rol==0&&
   <>
+
+  <Button variant="contained" startIcon={<PersonIcon />} onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>
+        Attendance
+    </Button>
+
   <Button variant="contained" startIcon={<EditNoteIcon />} onClick={()=>{navigate("/Grades", { state: { id: id,rol:rol } });}}>
         Manage Grades
     </Button>
     
-
-    <Button sx={{background:'#3D3D3D'}} variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id,rol:rol } });}}>
-        New Grade
-    </Button>
     </>
 }
     <Button sx={{background:'#3D3D3D'}} variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
