@@ -2,21 +2,23 @@ import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
 import { pilares } from '../data/data';
 import { GetAttendace } from '../api/asistencia.api';
+import { getStudentByID } from '../api/alumno.api';
 
 // Create styles
 const styles = StyleSheet.create({
 
     alumno:{
-        width:'80%',
+        width:'50%',
         marginTop:'20px',
         marginLeft:'auto',
         marginRight:'auto',
-        padding: '5px',
-        fontSize:'10px',     
+        fontSize:'10px',
+        border:'1px solic #000000',     
     },
     alumnodata:{
-        fontSize:'20px',
+        fontSize:'13px',
         padding:'5px',
+        borderBottom:'1px solic #000000',
     },
     page:{
         padding:'20px',
@@ -31,23 +33,22 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         display:'flex',
         alignItems:'center',
-        padding:'10px'
+        padding:'16px'
     },
     section:{
-        width:'80%',
+        width:'100%',
         display:'flex',
-        justifyContent:'center',
-        alignContent:'flex-end',
+        justifyContent: 'center',
+        alignItems:'center',
         flexDirection:'column'
     },
     text:{
-        fontSize:'11px',
+        fontSize:'13px',
         padding:'5px',
-        textAlign:'center'
+        display:'flex',
     },
     table:{
         width:'80%',
-        marginTop:'20px',
         marginLeft:'auto',
         marginRight:'auto',
         padding: '5px',
@@ -59,29 +60,27 @@ const styles = StyleSheet.create({
     },
     row:{
         flexDirection:'row',
-        border:'1px solic #ccc',
+        border:'1px solic #000000',
     },
     header:{
         width:'15px',
         textAlign:'center',
         fontWeight:'800',
         textTransform:'uppercase',
-        color:'black',
-        border:'1px solic #ccc'
+        border:'1px solic #000000'
     },
     header0:{
         width:'24px',
         textAlign:'center',
         fontWeight:'800',
         textTransform:'uppercase',
-        color:'black',
-        border:'1px solic #ccc'
+        border:'1px solic #000000'
     },
     cell:{
         width:'15px',
         textAlign:'center',
-        color:'#222',
-        border:'1px solic #ccc',
+        color:'#000000',
+        border:'1px solic #000000',
     },
     cellFilled:{
         width:'15px',
@@ -93,11 +92,13 @@ const styles = StyleSheet.create({
     cell0:{
         width:'24px',
         textAlign:'center',
-        color:'#222',
-        border:'1px solic #ccc',
+        color:' #000000',
+        border:'1px solic #000000',
     },
     containerText:{
-        width:'400px'
+        width:'500px',
+        marginLeft:'auto',
+        marginRight:'auto',
     }
 
 })
@@ -106,13 +107,15 @@ const styles = StyleSheet.create({
 // Create Document Component
 const Pdf = (params) => {
     const [data, setData] = useState([]);
-    const [asistencias,setasistencias] = useState([])
+    const today = new Date()
+
+    
     const getData =()=>{
         setData(pilares);
     }
 
     function Filtro(month,day,year,student) {
-        const found = asistencias.filter(item => (item.fecha === `${month}/${day}/${year}` && item.id_alumno == student))
+        const found = params.asistencias.filter(item => (item.fecha === `${month}/${day}/${year}` && item.id_alumno == student))
         if (found.length == 0) {
             return false
         }else{
@@ -123,36 +126,46 @@ const Pdf = (params) => {
 
     useEffect(async ()=>{
         getData()
-        let dataids = []
-        for (let index = 0; index < params.id.length; index++) {
-            const respuesta = await GetAttendace(params.id[index])
-            for (let index = 0; index < respuesta[1].attendance.length; index++) {
-                dataids.push(respuesta[1].attendance[index])
-            }
-            
-        }
-        setasistencias(dataids)
+        // GetDataStudents()
     },[]);
 
     return(
             <Document>
-                {params.id&&params.id.map((student)=>{
+                {params.dataAlumnos&&params.dataAlumnos.map((student)=>{
+                    const nombres = student.nombrecompleto.split(' ')
+                    const asistenciasAlumno = params.asistencias.filter(item => (item.id_alumno == student._id))
                     return(
-
-                        <Page size={"A4"} style={styles.Page}>
+                        
+                        <Page key={student._id} size={"A4"} style={styles.Page}>
                 <View style={styles.alumno}>
-                    <View style={styles.alumnodata}>
-                        <Text>Name:XXXXXXX</Text>
+                <View style={styles.alumnodata}>
+                        <Text>Date:{today.toLocaleDateString('en-GB')}</Text>
                     </View>
                     <View style={styles.alumnodata}>
-                        <Text>Last:XXXXXXX</Text>
+                        <Text>First Name:{nombres[0]}</Text>
                     </View>
                     <View style={styles.alumnodata}>
-                        <Text>CI:XXXXXXX</Text>
+                        <Text>Last Name:{nombres[1]}</Text>
                     </View>
                     <View style={styles.alumnodata}>
-                        <Text>Año:XXX   Seccion:XXX</Text>
+                        <Text>Document:{student.cedula}</Text>
                     </View>
+                    <View style={styles.alumnodata}>
+                        <Text>Grade:{student.Grade}   Section:{student.Section}</Text>
+                    </View>
+                    <View style={styles.alumnodata}>
+                        <Text>ATTENDANCE HISTORY            Year: 2024</Text>
+                    </View>
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.title}>Attendance record</Text>
+                </View>
+                    <View style={styles.containerText}>
+                        <Text style={styles.text}>As of the date this document is issued, the student {student.nombrecompleto} is the holder {Math.trunc((asistenciasAlumno.length/student.duration)*100)}% attendance.
+                        </Text>
+                    </View>
+                <View style={styles.section}>
+                    <Text style={styles.title}>Attendance table</Text>
                 </View>
                 <View style={styles.table}>
                     <View style={styles.row}>
@@ -257,97 +270,97 @@ const Pdf = (params) => {
                         <View style={styles.cell0}>
                             <Text>{el.id}</Text>
                         </View>
-                        <View style={ Filtro(index + 1,1,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,1,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,2,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,2,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,3,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,3,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,4,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,4,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,5,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,5,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,6,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,6,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,7,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,7,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,8,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,8,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,9,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,9,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,10,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,10,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,11,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,11,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,12,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,12,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,13,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,13,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,14,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,14,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,15,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,15,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,16,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,16,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,17,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,17,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,18,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,18,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,19,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,19,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,20,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,20,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,21,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,21,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,22,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,22,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,23,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,23,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,24,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,24,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,25,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,25,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,26,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,26,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,27,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,27,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,28,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,28,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,29,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,29,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,30,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,30,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
-                        <View style={ Filtro(index + 1,31,2024,student) ? styles.cellFilled : styles.cell}>
+                        <View style={ Filtro(index + 1,31,2024,student._id) ? styles.cellFilled : styles.cell}>
                             <Text></Text>
                         </View>
                     </View>)}

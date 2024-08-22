@@ -22,6 +22,8 @@ import GradeIcon from '@mui/icons-material/Grade';
 import FaceIcon from '@mui/icons-material/Face';
 import EnhancedTable from '../components/TableWithChecks';
 import CollapsibleTable from '../components/GradesTable';
+import PersonIcon from '@mui/icons-material/Person';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 function ManageGrades(props) {
 
     const {state} = useLocation();
@@ -41,21 +43,17 @@ Manage Grades
 
   {rol==0&&
   <>
-    <Button variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id,rol:rol } });}}>
-        New Student
+    <Button variant="contained" startIcon={<PersonIcon />} onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>
+        Attendance
     </Button>
 
-    <Button variant="contained" startIcon={<GradeIcon />} onClick={()=>{navigate("/NewGrade", { state: { id: id,rol:rol } });}}>
-      
-        New Grade
-    </Button>
-    <Button variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: id,rol:rol } });}}>
-        New Teacher
+    <Button variant="contained" startIcon={<EditNoteIcon />} onClick={()=>{navigate("/Grades", { state: { id: id,rol:rol } });}}>
+        Manage Grades
     </Button>
     </>
 }
     
-    <Button variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
+<Button sx={{background:'#3D3D3D'}} variant="contained" startIcon={<ExitToAppIcon />} onClick={()=>{navigate("/");}}>
         Exit 
     </Button>
 </Stack>

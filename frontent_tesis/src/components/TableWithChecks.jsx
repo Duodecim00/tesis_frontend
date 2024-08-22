@@ -71,7 +71,7 @@ const headCells = [
   // },
   {
     id: 'ID',
-    label: 'Cedula',
+    label: 'Document',
     minWidth:  80,
     align: 'right',
     format: (value) => value.toFixed(2),
@@ -529,7 +529,7 @@ export default function EnhancedTable(id) {
                             setgrade(e.target.value)  
                            }}
                          >
-                          <MenuItem value={""}>Todos</MenuItem>
+                          <MenuItem value={""}>All</MenuItem>
                           {
                             grades&&grades.map((grade)=>{
                               return(

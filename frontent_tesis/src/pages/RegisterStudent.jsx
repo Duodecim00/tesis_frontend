@@ -25,7 +25,7 @@ import {
   getsections
 } from "../api/curso.api";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Alert } from '@mui/material';
+import { Alert, CircularProgress } from '@mui/material';
 
 
 function RegisterStudent() {
@@ -45,7 +45,7 @@ function RegisterStudent() {
   const [Gender,setGender] = useState("")
   const [Age,setAge] = useState("")
   const [grades,setgrades] = useState([])
-
+  const [loading,setloading] = useState(false)
   const [enabledgrade,setenabledgrade] = useState(true)
   const [cantidadSeccion,setcantidadSeccion] = useState(0)
 
@@ -75,6 +75,28 @@ function RegisterStudent() {
     }
 
     async function Continue() {
+      setloading(true)
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          }}
+        const url = `http://localhost:3000/FindESP32`;
+  try {
+    const response = await fetch(url,requestOptions);
+    if (!response.ok) {
+      seterror(true)
+        setTimeout(() => {
+          seterror(false)
+        }, 5000);
+      setloading(false)
+      seterrorText("Couldn't find a fingerprint sensor to complete Registration")
+      throw new Error(`Response status: ${response.status}`);
+      
+    }else{
+      const json = await response.json();
+      console.log(json)
+
       const respuesta = await NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
       if (respuesta[0]==400) {
         seterror(true)
@@ -82,25 +104,17 @@ function RegisterStudent() {
           seterror(false)
         }, 5000);
         seterrorText(respuesta[1].msg)
+        setloading(false)
       }else if (respuesta[0]==201) {
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-          }}
-        const url = `http://192.168.1.107/?param1=${respuesta[1].newStudent._id}`;
-  try {
-    const response = await fetch(url,requestOptions);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+        navigate("/fingerprint", { state: { id: id,rol:rol,idStudent:respuesta[1].newStudent._id } });
+      }
     }
-
-    const json = await response.json();
   } catch (error) {
     console.error(error.message);
   }
-        navigate("/fingerprint", { state: { id: id,rol:rol } });
-      }
+
+
+      
     }
 
     async function start() {
@@ -118,8 +132,14 @@ function RegisterStudent() {
   return(
 
 <>
+{
+          !error&&loading&&
+            <Box sx={{ display: 'flex', width:"100%",height:"100%",marginTop:"10px",position:"absolute",backgroundColor:"rgba(121, 120, 121, 0.5)",alignContent:"center",justifyContent:"center",alignItems:"center" }}>
+            <CircularProgress sx={{marginLeft:"auto",marginRight:"auto"}} />
+          </Box>
+           }
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} disabled={loading} onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>
         <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
@@ -141,14 +161,14 @@ function RegisterStudent() {
             </Grid>
               <Grid container spacing={1}>
                   <Grid item xs={6}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" value={FirstName} onChange={(e)=>{setFirstName(e.target.value)}} />
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" disabled={loading} value={FirstName} onChange={(e)=>{setFirstName(e.target.value)}} />
                   </Grid>
 
                   <Grid item xs={6}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" value={LastName} onChange={(e)=>{setLastName(e.target.value)}}/>
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" disabled={loading}  value={LastName} onChange={(e)=>{setLastName(e.target.value)}}/>
                   </Grid>
                   <Grid item xs={12}>
-                      <TextField sx={{width: '100%' }} id="outlined-basic" label="CI" variant="outlined" value={Cedula} onChange={(e)=>{setCedula(e.target.value)}}/>
+                      <TextField sx={{width: '100%' }} id="outlined-basic" label="CI" variant="outlined" disabled={loading} value={Cedula} onChange={(e)=>{setCedula(e.target.value)}}/>
                   </Grid>
               </Grid>
         </Grid>
@@ -164,6 +184,7 @@ function RegisterStudent() {
                                   id="demo-simple-select"
                                   value={Gender}
                                   label="Gender"
+                                  disabled={loading}
                                   onChange={handleGender}
                                 >
                                 <MenuItem value={'Male'}>Male</MenuItem>
@@ -174,7 +195,7 @@ function RegisterStudent() {
                     </Grid>
 
                     <Grid item xs={6}>
-                        <TextField inputProps={{ type: 'number'}} sx={{width: '100%' }} id="outlined-basic" label="Age" variant="outlined" value={Age} onChange={(e)=>{setAge(e.target.value)}}/>
+                        <TextField inputProps={{ type: 'number'}} sx={{width: '100%' }} id="outlined-basic" label="Age" variant="outlined" disabled={loading} value={Age} onChange={(e)=>{setAge(e.target.value)}}/>
                     </Grid>
 
 
@@ -193,6 +214,7 @@ function RegisterStudent() {
                              id="demo-simple-select"
                              value={Grado}
                              label="Grado"
+                             disabled={loading}
                              onChange={(e)=>{setGrado(e.target.value)}}
                            >
                             {grades&&grades.map((grade)=>{
@@ -201,12 +223,6 @@ function RegisterStudent() {
                               )
                               
                             })}
-                                {/* <MenuItem value={10}>1.º</MenuItem>
-                                <MenuItem value={20}>2.º</MenuItem>
-                                <MenuItem value={30}>3.º</MenuItem>
-                                <MenuItem value={40}>4.º</MenuItem>
-                                <MenuItem value={50}>5.º</MenuItem>
-                                <MenuItem value={60}>6.º</MenuItem> */}
                                 
                        </Select>
                    </FormControl>
@@ -221,7 +237,7 @@ function RegisterStudent() {
                              value={Seccion}
                              label="Seccion"
                              onChange={handleSeccion}
-                             disabled={enabledgrade}
+                             disabled={enabledgrade||loading}
                              style={{
                               backgroundColor: enabledgrade == true ? 'rgb(200,200,200)' : 'white',
                             }}
@@ -245,7 +261,7 @@ function RegisterStudent() {
    </Grid>
 
     <div style={{margin: '20px', marginLeft: 'auto',marginRight: 'auto'}}>
-        <Button onClick={()=>{Continue()}} variant="contained">Continue</Button>
+        <Button disabled={loading} onClick={()=>{Continue()}} variant="contained">Continue</Button>
     </div>
 
     
@@ -253,11 +269,19 @@ function RegisterStudent() {
 
 </Grid>
 
-{error&&<Alert severity="error" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>
-          {errorText}
-          </Alert>}
+
+
+          
 
 </Box>
+
+           {error&&
+           <Box sx={{ display: 'flex', width:"100%",marginTop:"10px",alignContent:"center",justifyContent:"center",alignItems:"center" }}>
+            <Alert severity="error" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>
+          {errorText}
+          </Alert>
+         </Box>
+          }
 </>
   );
 }

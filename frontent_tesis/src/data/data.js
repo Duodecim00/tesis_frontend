@@ -7,7 +7,6 @@ export const pilares = [
     },
     {
       id: 'MAR',
-      respiracion: "Respiración del Insecto"
     },
     {
       id: 'APR',
