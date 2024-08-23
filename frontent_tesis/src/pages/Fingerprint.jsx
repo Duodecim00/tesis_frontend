@@ -24,7 +24,7 @@ function Fingerprint() {
   const ws = useRef(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://192.168.1.107:81");
+    ws.current = new WebSocket("ws://192.168.1.106:81");
     ws.current.onopen = () =>  AddFingerPrint();
     ws.current.onclose = () => console.log("ws closed");
 
