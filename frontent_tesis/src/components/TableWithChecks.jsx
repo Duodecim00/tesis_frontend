@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom';
 import CustomizedMenus from './Menu';
 import useStore from '../store/useStore';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AlertDialog from './AlertDialog';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -278,6 +279,7 @@ export default function EnhancedTable(id) {
   async function getstudentsdata() {
     if (id.rol===0) {
       const respuesta = await getallstudents()
+      console.log(respuesta)
       const data = []
     if (respuesta[0]==400) {
       seterror(true)
@@ -541,6 +543,7 @@ export default function EnhancedTable(id) {
                               
                      </Select>
                  </FormControl>
+                 <AlertDialog></AlertDialog>
 
                  <Button sx={{background:'#6FB555',marginLeft:"auto",marginBottom:"15px"}} variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterS", { state: { id: id.id,rol:id.rol } });}}>
         New Student

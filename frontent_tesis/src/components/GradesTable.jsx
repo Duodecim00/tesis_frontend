@@ -22,34 +22,12 @@ import CustomizedMenusGrades from './MenuGrades';
 import { useNavigate } from 'react-router-dom';
 import GradeIcon from '@mui/icons-material/Grade';
 import FaceIcon from '@mui/icons-material/Face';
+import BasicModal from './Modal';
+import useStore from '../store/useStore';
+import CustomizedDialogs from './Modal';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AlertDialog from './AlertDialog';
 
-function createData(name, section, teacher, students, duration, startdate,enddate,starttime,endtime,classes,total,classdays) {
-  return {
-    name, 
-    section, 
-    teacher, 
-    students, 
-    duration, 
-    startdate,
-    enddate,
-    starttime,
-    endtime,
-    classes,
-    total,
-    classdays:["Monday","Tuesday",'Wednesday']
-  };
-}
-
-
-
-// const rows = [
-//     createData('Matematica 4', "A", "Mario Molina", 24, "4 Weeks", '8/16/24','8/17/24',"00:00:00","23:00:00",3,12),
-//     createData('Matematica 4', "A", "Mario Molina", 24, "4 Weeks", '8/16/24','8/17/24',"00:00:00","23:00:00",3,12),
-//     createData('Matematica 4', "A", "Mario Molina", 24, "4 Weeks", '8/16/24','8/17/24',"00:00:00","23:00:00",3,12),
-//     createData('Matematica 4', "A", "Mario Molina", 24, "4 Weeks", '8/16/24','8/17/24',"00:00:00","23:00:00",3,12),
-//     createData('Matematica 4', "A", "Mario Molina", 24, "4 Weeks", '8/16/24','8/17/24',"00:00:00","23:00:00",3,12),
-
-//   ];
 
 function Row(props) {
   const { row,id,rol } = props;
@@ -168,6 +146,7 @@ export default function CollapsibleTable(params) {
     const [rowsfiltred,setrowsfiltred] = React.useState([])
     const [search, setSearch] = React.useState("")
     const [loading,setloading] = React.useState(true)
+    const {count} = useStore()
     const navigate = useNavigate();
 
 
@@ -183,7 +162,7 @@ export default function CollapsibleTable(params) {
     
     React.useEffect(()=>{
         getData()
-    },[])
+    },[count])
     
     const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -244,9 +223,14 @@ export default function CollapsibleTable(params) {
     />
                  </FormControl>
 
+                 
+
                  <Box sx={{display:"flex",marginLeft:"auto" }}>
 
-                 <Button sx={{background:'#6FB555',marginBottom:"15px",marginRight:"25px"}} variant="contained" startIcon={<FaceIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: params.id,rol:params.rol } });}}>
+                 <CustomizedDialogs></CustomizedDialogs>
+                 <AlertDialog></AlertDialog>
+
+                 <Button sx={{background:'#6FB555',marginBottom:"15px",marginRight:"25px"}} variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: params.id,rol:params.rol } });}}>
         New Teacher
     </Button>
 

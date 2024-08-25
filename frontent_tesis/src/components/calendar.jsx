@@ -178,10 +178,15 @@ export default function DateCalendarServerRequest(id) {
     setbefore(today.getMonth())
     const respuesta = await GetAttendace(id.id)
     const respuesta2 = await getgradebystudentID(id.id)
-    setidGrade(respuesta2.grade[0]._id)
-    setfechainicio(respuesta2.grade[0].fechaInicio)
-    setfechafinal(respuesta2.grade[0].fechaFin)
-    setdays(respuesta2.classes)
+    if (respuesta[0]==400) {
+      console.log("No Grade assigned")
+    }else if (respuesta[0]==200) {
+      setidGrade(respuesta2.grade[0]._id)
+      setfechainicio(respuesta2.grade[0].fechaInicio)
+      setfechafinal(respuesta2.grade[0].fechaFin)
+      setdays(respuesta2.classes)
+    }
+   
 
     if (respuesta[0]==400) {
          
