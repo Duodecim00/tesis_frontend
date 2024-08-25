@@ -75,17 +75,13 @@ export default function CustomizedMenusGrades(params) {
     setAnchorEl(null);
   };
 
+  const {id,SetID,OpenDialog,DeleteGradeTrue} = useStore()
 
-  const {inc,count} = useStore()
-
-  async function DeleteProcess() {
-      setAnchorEl(null);
-      inc()
-    
+  async function DeleteProcess(id) {
+    SetID(id)
+    DeleteGradeTrue()
+    OpenDialog()
   }
-
-
-
 
   return (
     <div>
@@ -103,7 +99,7 @@ export default function CustomizedMenusGrades(params) {
           <EditNoteIcon />
           Edit Grade
         </MenuItem>
-        <MenuItem onClick={()=>{DeleteProcess()}} disableRipple>
+        <MenuItem onClick={()=>{DeleteProcess(params.idfila)}} disableRipple>
           <RemoveCircleIcon />
           Delete
         </MenuItem>

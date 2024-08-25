@@ -151,7 +151,7 @@ function EditGrade() {
   return(
 <>
 <Toolbar sx={{ backgroundColor: theme.palette.primary.light, marginBottom: '30px'}}>
-      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Attendace", { state: { id: id,rol:rol } });}}>
+      <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={()=>{navigate("/Grades", { state: { id: id,rol:rol } });}}>
         <ArrowBackIcon sx={{color: theme.palette.primary.dark}} />
       </IconButton>
       <Typography sx={{color: theme.palette.primary.dark}} variant="h6" noWrap component="div">
@@ -331,7 +331,9 @@ function EditGrade() {
           </Alert>}
 
 
-          {Success&&<Alert severity="success">{errorText}</Alert>}
+          {
+          Success&&
+          <Alert severity="success" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>{errorText}</Alert>}
 
 </Box>
 

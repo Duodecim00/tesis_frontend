@@ -23,8 +23,10 @@ import { useNavigate } from 'react-router-dom';
 import GradeIcon from '@mui/icons-material/Grade';
 import FaceIcon from '@mui/icons-material/Face';
 import BasicModal from './Modal';
+import useStore from '../store/useStore';
 import CustomizedDialogs from './Modal';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AlertDialog from './AlertDialog';
 
 
 function Row(props) {
@@ -144,6 +146,7 @@ export default function CollapsibleTable(params) {
     const [rowsfiltred,setrowsfiltred] = React.useState([])
     const [search, setSearch] = React.useState("")
     const [loading,setloading] = React.useState(true)
+    const {count} = useStore()
     const navigate = useNavigate();
 
 
@@ -159,7 +162,7 @@ export default function CollapsibleTable(params) {
     
     React.useEffect(()=>{
         getData()
-    },[])
+    },[count])
     
     const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -225,6 +228,7 @@ export default function CollapsibleTable(params) {
                  <Box sx={{display:"flex",marginLeft:"auto" }}>
 
                  <CustomizedDialogs></CustomizedDialogs>
+                 <AlertDialog></AlertDialog>
 
                  <Button sx={{background:'#6FB555',marginBottom:"15px",marginRight:"25px"}} variant="contained" startIcon={<PersonAddIcon />} onClick={()=>{navigate("/RegisterT", { state: { id: params.id,rol:params.rol } });}}>
         New Teacher

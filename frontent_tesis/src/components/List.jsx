@@ -10,11 +10,13 @@ import CommentIcon from '@mui/icons-material/Comment';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useEffect } from 'react';
 import { DeleteTeacher, getallteachers } from '../api/profesor.api';
+import useStore from '../store/useStore';
+
+
 export default function CheckboxList() {
   const [teachers,setteachers] = React.useState([])
   const [change,setchage] = React.useState(0)
-
-
+  const {count,SetID,DeleteTeacherTrue,OpenDialog} = useStore()
 
   async function GetTeachers() {
     const respuesta = await getallteachers()
@@ -23,16 +25,12 @@ export default function CheckboxList() {
   }
   useEffect(()=>{
     GetTeachers()
-  },[change])
+  },[count])
 
   async function DeleteProcess(id) {
-    const respuesta = await DeleteTeacher(id)
-    if (respuesta[0]==400) {
-    console.log(respuesta[1].msg)
-    }else if (respuesta[0]==200) {
-      console.log(respuesta[1].msg)
-      setchage(change + 1)
-    }
+    SetID(id)
+    DeleteTeacherTrue()
+    OpenDialog()
     
   }
 
@@ -43,7 +41,7 @@ export default function CheckboxList() {
 
         return (
           <ListItem
-            key={value}
+            key={value._id}
             secondaryAction={
               <IconButton edge="end" aria-label="comments">
                 <DeleteForeverIcon onClick={()=>{DeleteProcess(value._id)}}/>

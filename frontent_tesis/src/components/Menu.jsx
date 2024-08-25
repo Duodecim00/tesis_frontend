@@ -65,9 +65,11 @@ const StyledMenu = styled((props) => (
 
 export default function CustomizedMenus(params) {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -76,17 +78,12 @@ export default function CustomizedMenus(params) {
   };
 
 
-  const {inc,count} = useStore()
+  const {id,SetID,OpenDialog,DeleteStudentTrue} = useStore()
 
-  async function DeleteProcess() {
-    const respuesta = await DeleteStudent(params.idfila)
-    if (respuesta[0]==400) {
-    console.log(respuesta[1].msg)
-    }else if (respuesta[0]==200) {
-      setAnchorEl(null);
-      inc()
-    }
-    
+  async function DeleteProcess(id) {
+    SetID(id)
+    DeleteStudentTrue()
+    OpenDialog()
   }
 
 
@@ -136,7 +133,7 @@ export default function CustomizedMenus(params) {
           <PrintIcon />
           Print Attendance
         </MenuItem>
-        <MenuItem onClick={()=>{DeleteProcess()}} disableRipple>
+        <MenuItem onClick={()=>{DeleteProcess(params.idfila)}} disableRipple>
           <PersonRemoveIcon />
           Delete
         </MenuItem>

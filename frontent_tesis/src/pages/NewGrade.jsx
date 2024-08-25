@@ -306,12 +306,16 @@ function NewGrade() {
 
 
 </Grid>
-{error&&<Alert severity="error" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>
+{
+error&&
+<Alert severity="error" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>
           {errorText}
           </Alert>}
 
 
-          {Success&&<Alert severity="success">{errorText}</Alert>}
+          {
+          Success&&
+          <Alert severity="success" style={{position:'absolute',bottom:10, marginLeft:"auto",marginRight:"auto"}}>{errorText}</Alert>}
 
 </Box>
 
