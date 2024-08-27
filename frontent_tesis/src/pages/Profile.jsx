@@ -18,6 +18,7 @@ import Button from '@mui/material/Button';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getStudentByID } from '../api/alumno.api';
 import { GetGrades, getsections } from '../api/curso.api';
+import { colors } from '@mui/material';
 
 
 function Profile() {
@@ -116,21 +117,25 @@ function Profile() {
       <Grid item xs={10} >
             
               <Grid container spacing={1}>
-                  <Grid item xs={4}>
+                  <Grid item xs={3}>
                       <TextField sx={{width: '100%' }} id="outlined-basic" label="First Name" variant="outlined" value={Fname} onChange={(e)=>{setFname(e.target.value)}} />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={3}>
                       <TextField sx={{width: '100%' }} id="outlined-basic" label="Last Name" variant="outlined" value={Lname} onChange={(e)=>{setLname(e.target.value)}}/>
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid item xs={3}>
                       <TextField sx={{width: '100%' }} id="outlined-basic" label="Cedula" variant="outlined" value={Cedula} onChange={(e)=>{setCedula(e.target.value)}} />
                   </Grid>
+
                   <Grid item xs={3}>
                     <FormControl fullWidth>
                     <TextField sx={{width: '100%' }} id="outlined-basic" label="Gender" variant="outlined" value={Gender} onChange={(e)=>{setGender(e.target.value)}} />
                     </FormControl>
-                    <FormControl fullWidth>
+
+               </Grid>
+               <Grid item xs={3}>
+               <FormControl fullWidth>
                        <InputLabel id="demo-simple-select-label">Grade</InputLabel>
                            <Select
                              labelId="demo-simple-select-label"
@@ -150,7 +155,7 @@ function Profile() {
                    </FormControl>
                </Grid>
 
-               <Grid item xs={6}>
+               <Grid item xs={3}>
                <FormControl fullWidth>
                        <InputLabel id="demo-simple-select-label">Section</InputLabel>
                            <Select
@@ -180,15 +185,19 @@ function Profile() {
                     <TextField inputProps={{ type: 'number'}} sx={{width: '100%' }} id="outlined-basic" label="Age" variant="outlined" value={Age} onChange={(e)=>{setAge(e.target.value)}}/>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={7}>
+                  <Grid item xs={4}>
                   <TextField sx={{width: '100%' }} id="outlined-basic" label="ID" variant="outlined" value={IdAlumno} disabled />
                   </Grid>
-                  <Button variant="contained">Update</Button>
+             
               </Grid>
         </Grid>
+        <div style={{ marginLeft: 'auto',marginRight: 'auto'}}>
+          <Button sx={{backgroundColor:colors.green[400]}} variant="contained">Update</Button>
+        </div>
+        
 </Grid>
-
-
+     
+     
 
 </Box>
 <Box sx={{ width: '90%', marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}} alignItems="center">

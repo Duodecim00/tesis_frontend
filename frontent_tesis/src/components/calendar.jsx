@@ -427,7 +427,7 @@ export default function DateCalendarServerRequest(id) {
                             />
                           </Grid>
                                 <div style={{margin: '5px', marginLeft: 'auto',marginRight: 'auto'}}>
-                                  <Button variant="contained" style={{ marginLeft: '10px',marginRight: '10px'}} onClick={()=>{CreateAttendance()}}>save</Button>
+                                  <Button variant="contained" style={{ marginLeft: '10px',marginRight: '10px'}} sx={{backgroundColor:colors.green[400]}} onClick={()=>{CreateAttendance()}}>save</Button>
                                 </div>
                         </Grid>
                     </Box>
