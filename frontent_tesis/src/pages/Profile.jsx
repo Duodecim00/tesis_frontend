@@ -16,8 +16,8 @@ import Select from '@mui/material/Select';
 import DateCalendarServerRequest from '../components/calendar'
 import Button from '@mui/material/Button';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getStudentByID } from '../api/alumno.api';
-import { GetGrades, getsections } from '../api/curso.api';
+import { EditStudent, getStudentByID } from '../api/alumno.api';
+import { getGrade, GetGrades, getsections } from '../api/curso.api';
 import { colors } from '@mui/material';
 
 
@@ -36,7 +36,7 @@ function Profile() {
     const [Age,setAge] = useState("")
     const [Grado,setGrado] = useState("")
     const [Gender,setGender] = useState("")
-    const [IdCurso,setIdCurso] = useState("")
+    const [IdCurso,setIdCurso] = useState()
     const [IdHuella,setIdHuella] = useState("")
     const [IdAlumno,setIdAlumno] = useState("")
     const [cantidadSeccion,setcantidadSeccion] = useState(0)
@@ -44,6 +44,10 @@ function Profile() {
     const [idSeccion,setidSeccion] = useState("")
     const [enabledgrade,setenabledgrade] = useState(true)
     const [grades,setgrades] = useState([])
+    const [secciondefault,setsecciondefault] = useState(10)
+
+  const [error,seterror] = useState(false)
+  const [errorText,seterrorText] = useState('ErrorMsg')
 
     const handleSeccion = (event) => {
       setSeccion(event.target.value);
@@ -56,15 +60,16 @@ function Profile() {
         }else if (respuesta[0]==200) {
           setFullName(respuesta[1].nombrecompleto)
           const nombres = respuesta[1].nombrecompleto.split(' ');
+          setIdCurso(respuesta[1].id_curso)
           setFname(nombres[0])
           setLname(nombres[1])
           setUrlfoto(respuesta[1].url_foto)
           setCedula(respuesta[1].cedula)
           setAge(respuesta[1].edad)
           setGender(respuesta[1].genero)
-          setIdCurso(respuesta[1].id_curso)
           setIdHuella(respuesta[1].idHuella)
           setIdAlumno(respuesta[1]._id)
+          getGradeData(respuesta[1].id_curso)
         }
       }
 
@@ -72,7 +77,6 @@ function Profile() {
         setenabledgrade(false)
         // if (cantidadSeccion == 0) {
           const valor = await getsections(id)
-          console.log(valor)
           setcantidadSeccion(valor)
         // }
       
@@ -85,11 +89,50 @@ function Profile() {
           setgrades(valor[1])
         }
       }
+
+      async function getGradeData(id) {
+        const respuesta2 = await getGrade(id)
+    setGrado(respuesta2[0].nombreCurso)
+    const valor = await getsections(respuesta2[0].nombreCurso)
+    setcantidadSeccion(valor)
+    setSeccion(respuesta2[0].seccion)
+      }
       
       useEffect(()=>{
         Getdata()
         start()
       },[])
+ 
+
+      const update = async ()=>{
+        console.log(IdAlumno,
+          `${Fname+" "+Lname}`,
+          Cedula,
+          Gender,
+          Age,
+          idSeccion)
+        const respuesta = await EditStudent(
+          IdAlumno,
+          `${Fname+" "+Lname}`,
+          Cedula,
+          Gender,
+          Age,
+          idSeccion
+        )
+        if (respuesta[0]==400) {
+          seterror(true)
+          setTimeout(() => {
+            seterror(false)
+          }, 5000);
+          seterrorText(respuesta[1].msg)
+        }else if (respuesta[0]==200) {
+          setSuccess(true)
+          setTimeout(() => {
+            setSuccess(false)
+          }, 5000);
+          seterrorText(respuesta[1].msg)
+        }
+      }
 
   return(
 <>
@@ -146,7 +189,9 @@ function Profile() {
                            >
                             {grades&&grades.map((grade)=>{
                               return(
-                              <MenuItem onClick={()=>{prueba(grade.nombreCurso)}} key={grade._id} value={grade.nombreCurso}>{grade.nombreCurso}</MenuItem>
+                              <MenuItem 
+                              onClick={()=>{prueba(grade.nombreCurso)}} 
+                              key={grade._id} value={grade.nombreCurso}>{grade.nombreCurso}</MenuItem>
                               )
                               
                             })}
@@ -157,28 +202,46 @@ function Profile() {
 
                <Grid item xs={3}>
                <FormControl fullWidth>
-                       <InputLabel id="demo-simple-select-label">Section</InputLabel>
+                       <InputLabel id="demo-simple-select-label">Grade</InputLabel>
                            <Select
                              labelId="demo-simple-select-label"
                              id="demo-simple-select"
                              value={Seccion}
-                             label="Seccion"
-                             onChange={handleSeccion}
-                             disabled={enabledgrade}
-                             style={{
-                              backgroundColor: enabledgrade == true ? 'rgb(200,200,200)' : 'white',
-                            }}
+                             label="Grado"
+                             onChange={(e)=>{setSeccion(e.target.value)}}
                            >
                             {cantidadSeccion&&cantidadSeccion.map((seccion)=>{
                               return(
                                 <MenuItem onClick={()=>{setidSeccion(seccion._id)}} key={seccion._id} value={seccion.seccion}>{seccion.seccion}</MenuItem>
                               )
+                              
                             })}
-                           {/* <MenuItem value={10}>A</MenuItem>
-                           <MenuItem value={20}>B</MenuItem>
-                           <MenuItem value={30}>C</MenuItem> */}
+                                
                        </Select>
                    </FormControl>
+               {/* <FormControl fullWidth>
+                       <InputLabel id="demo-simple-select-label">Section</InputLabel>
+                           <Select
+                             labelId="demo-simple-select-label"
+                             id="demo-simple-select"
+                             value={Seccion}
+                             defaultValue={secciondefault}
+                             label="Seccion"
+                             onChange={handleSeccion}
+                            // disabled={enabledgrade}
+                            //  style={{
+                            //   backgroundColor: enabledgrade == true ? 'rgb(200,200,200)' : 'white',
+                            // }}
+                           >
+                            <MenuItem value={10}>Default Value</MenuItem>
+                            {cantidadSeccion&&cantidadSeccion.map((seccion,index)=>{
+                              console.log(index)
+                              return(
+                                <MenuItem onClick={()=>{setidSeccion(seccion._id)}} key={index} value={index}>{seccion.seccion}</MenuItem>
+                              )
+                            })}
+                       </Select>
+                   </FormControl> */}
                   </Grid>
                   <Grid item xs={2}>
                     <FormControl fullWidth>
@@ -192,7 +255,7 @@ function Profile() {
               </Grid>
         </Grid>
         <div style={{ marginLeft: 'auto',marginRight: 'auto'}}>
-          <Button sx={{backgroundColor:colors.green[400]}} variant="contained">Update</Button>
+          <Button onClick={()=>{update()}} sx={{backgroundColor:colors.green[400]}} variant="contained">Update</Button>
         </div>
         
 </Grid>
@@ -203,8 +266,8 @@ function Profile() {
 <Box sx={{ width: '90%', marginLeft: 'auto',marginRight: 'auto', borderRadius: 1}} alignItems="center">
 
 <Grid container spacing={2} sx={{ padding: '25px'}} style={{display:"flex",flexDirection:"row"}}>
+  {IdCurso&&<DateCalendarServerRequest id={params.id} IdCurso={IdCurso}/>}
 
-<DateCalendarServerRequest id={params.id}/>
 </Grid>
 </Box>
 

@@ -190,7 +190,6 @@ export async function getsections(id){
 
 
   export async function EditGradeApi(idgrade,name,idteacher,seccion,weeks,startdate,timestart,timeend,days) {
-    console.log(idgrade,name,idteacher,seccion,weeks,startdate,timestart,timeend,days)
     const requestOptions = {
       method: 'PUT',
       headers: {
