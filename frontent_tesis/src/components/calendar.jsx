@@ -84,7 +84,7 @@ export default function DateCalendarServerRequest(id) {
            classday = true
         }
         }else{
-  if (ActualMonth) {
+  if (true) {
   
       if (props.day.$d.getMonth()>StartDate.getMonth() && props.day.$d.getMonth()<FinalDate.getMonth() && props.day.$d.getFullYear()==StartDate.getFullYear()) {
         if (
@@ -156,13 +156,12 @@ export default function DateCalendarServerRequest(id) {
         
         badgeContent={note ? '📌' : undefined}
       >
-        {}
         <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day}   
         sx={{
         backgroundColor: isSelected ? colors.green[500] : 
         daymissed ? colors.yellow[700] :
         classday ? colors.red[500] : '#424542',
-          color: '#fff'}} />
+        color: '#fff'}} />
       </Badge>
     );
   }
@@ -176,15 +175,19 @@ export default function DateCalendarServerRequest(id) {
 
   async function getData() {
     setbefore(today.getMonth())
-    const respuesta = await GetAttendace(id.id)
+    const respuesta = await GetAttendace(id.id,id.IdCurso)
     const respuesta2 = await getgradebystudentID(id.id)
     if (respuesta[0]==400) {
       console.log("No Grade assigned")
     }else if (respuesta[0]==200) {
-      setidGrade(respuesta2.grade[0]._id)
-      setfechainicio(respuesta2.grade[0].fechaInicio)
-      setfechafinal(respuesta2.grade[0].fechaFin)
-      setdays(respuesta2.classes)
+      setidGrade(respuesta2[1].grade[0]._id)
+      console.log(respuesta2[1].grade[0]._id)
+      setfechainicio(respuesta2[1].grade[0].fechaInicio)
+      console.log(respuesta2[1].grade[0].fechaInicio)
+      setfechafinal(respuesta2[1].grade[0].fechaFin)
+      console.log(respuesta2[1].grade[0].fechaFin)
+      setdays(respuesta2[1].classes)
+      console.log(respuesta2[1].classes)
     }
    
 
@@ -427,7 +430,7 @@ export default function DateCalendarServerRequest(id) {
                             />
                           </Grid>
                                 <div style={{margin: '5px', marginLeft: 'auto',marginRight: 'auto'}}>
-                                  <Button variant="contained" style={{ marginLeft: '10px',marginRight: '10px'}} onClick={()=>{CreateAttendance()}}>save</Button>
+                                  <Button variant="contained" style={{ marginLeft: '10px',marginRight: '10px'}} sx={{backgroundColor:colors.green[400]}} onClick={()=>{CreateAttendance()}}>save</Button>
                                 </div>
                         </Grid>
                     </Box>

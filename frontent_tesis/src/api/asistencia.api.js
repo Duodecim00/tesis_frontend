@@ -29,15 +29,20 @@ export async function NewAttendanceEdit(id,fecha,time,note) {
       } 
     }
 
-    export async function GetAttendace(id) {
+    export async function GetAttendace(id,IdCurso) {
+      console.log(id,IdCurso)
         const requestOptions = {
-          method: 'GET',
+          method: 'POST',
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
-          }}
+          },
+          body: JSON.stringify({
+            "id":id,
+            "IdCurso":IdCurso
+          })}
           try {
-            const response = await fetch(`http://localhost:3000/GetAttendace/${id}`,requestOptions);
+            const response = await fetch(`http://localhost:3000/GetAttendace`,requestOptions);
             if (!response.ok) {
               const json = await response.json();
               return [response.status,json]

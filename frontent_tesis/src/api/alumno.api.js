@@ -115,3 +115,34 @@ export async function NewStudent(FirstName,LastName,Cedula,Age,Gender,idSeccion)
               } 
             
           }
+
+          export async function EditStudent(idalumno,nombrecompleto,cedula,gender,age,id_curso) {
+            console.log(nombrecompleto)
+            const requestOptions = {
+              method: 'PUT',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+              id:idalumno,
+              nombrecompleto:nombrecompleto,
+              cedula:cedula,
+              gender:gender,
+              age:age,
+              id_curso:id_curso
+              })}
+              try {
+                const response = await fetch(`http://localhost:3000/EditStudent`,requestOptions);
+                if (!response.ok) {
+                  const json = await response.json();
+                console.log(json)
+                return [response.status,json]
+                }
+                const json = await response.json();
+                console.log(json)
+                return [response.status,json]
+              } catch (error) {
+                console.error(error.message);
+              }
+          }
